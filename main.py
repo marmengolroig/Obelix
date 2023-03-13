@@ -1,4 +1,4 @@
-# [D]ecoding [A]ste[RIX]
+# [OBELIX] - [python]
 
 # README of the file "asterix_cat10":
 # Contains 12 blocks of Asterix category 10 data. 
