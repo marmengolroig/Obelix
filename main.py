@@ -23,7 +23,7 @@ class data_block:
     def __init__(self,CAT,LEN,REC):
         self.CAT = CAT
         self.LEN = LEN
-        self.REC = []
+        self.data = []
 
 def main():
 
@@ -55,22 +55,22 @@ def main():
     new_db=True
     sum=0
     data_block_list=[]
+    n=0
     while i<len(decimal_list):
         if new_db:
             CAT=decimal_list[i]
             LEN=decimal_list[i+1]+decimal_list[i+2]
-            REC=[]
+            data=[]
+            data_block_list.append(data_block(CAT,LEN,data))
             sum=sum+LEN
             k=0
             l=i
-            while k<LEN-3:
-                REC.append(data_block_list[l])
+            while k<LEN:
+                data_block_list[n].data.append(data_block_list[l])
                 l=l+1
                 k=k+1
-            
-            db = data_block(CAT,LEN,REC)
             new_db=False
-            data_block_list.append(db)
+            n=n+1
         if i==sum-1:
             new_db=True
         i=i+1
