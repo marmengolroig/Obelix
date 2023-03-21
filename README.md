@@ -1,8 +1,7 @@
 # Obelix
 ASTERIX Decoder
-## OBELIX TITLE
+## OBELIX subtitle 
 
-#OBELIX SUBTITLE
-
+### subtitle 2
 Hola que tal 
 
