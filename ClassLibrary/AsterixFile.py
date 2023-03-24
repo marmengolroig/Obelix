@@ -3,30 +3,46 @@
 # DATAFIELD_LIST - is a list of decimal values, each value represents a Data Field (DF) octet. 
 class Record:
     def __init__(self):
-        self.fspec = []
+        self.fspec = ''
         self.datafield_list = []
+        self.record_decimal_list = []
 
     def __str__(self) -> str:
         return str(self.fspec) + str(self.datafield_list)
 
     def append(self,decimal): # append decimal to record (fspec or datafield)
-        bin_str = bin(decimal)[2:].zfill(8)
-        if bin_str[-1]=='1':
-            self.fspec.append(bin_str)
-        elif bin_str[-1]=='0':
-            self.datafield_list.append(decimal)
+        self.record_decimal_list.append(decimal)
     
     def retrieve_num_datafields(self):
         return len(self.datafield_list)
+    
+    def divide_record(self):
+        i=0
+        while True:
+            bin_str = bin(self.record_decimal_list[i])[2:].zfill(8) # to binary
+            self.fspec = self.fspec + bin_str # append binary string to fspec
+            if bin_str[0] == '0':
+                self.fspec = self.fspec + bin_str # append binary string to fspec
+                break # end of fspec
+            i+=1
+        bin_str = bin(self.record_decimal_list[i+1])[2:].zfill(8) # to binary
+        self.fspec = self.fspec + bin_str # append binary string to fspec
+        self.datafield_list = self.record_decimal_list[i+9:] # datafields are the rest of the record
+
+    def retrieve_num_datafields(self):
+        return len(self.datafield_list)
+    
+    def retrieve_fspec_length(self):
+        return len(self.fspec)
 
 # A class "DataBlock" is declared with its attributes: 
 # CAT (1 octet) - indicates the Category of the data block, 
 # LONG (2 octets) - indicates the number of octets of the data block (including CAT and LONG), and 
 # RECORD - is the surveillance data of the data block. 
 class DataBlock:
-    def __init__(self,cat,long,record):
+    def __init__(self,cat):
         self.cat = cat
-        self.long = long
+        self.long = 0
         self.record = Record()
 
     def decode_long(self,decimal_1,decimal_2):
@@ -40,12 +56,13 @@ class AsterixFile:
     def __init__(self, path):
         self.path = path
         self.datablock_list = []
+        self.decimal_list = []
 
     def retrieve_num_datablocks(self):
         return len(self.datablock_list)
 
     def read_file(self):
-        decimal_list  = []
+        self.decimal_list  = []
         byte_list = []
         # open file in binary mode
         with open(self.path, "rb") as f:
@@ -58,30 +75,33 @@ class AsterixFile:
         for byte in byte_list:
             # to decimal
             decimal_value = ord(byte) # ord() returns the integer value of a byte
-            decimal_list.append(decimal_value)
+            self.decimal_list.append(decimal_value)
 
-        return decimal_list
+        return self.decimal_list
     
-    def divide_datablocks(self, decimal_list):
+    def divide_datablocks(self):
         i=0
         new_datablock=True
         sum=0
         n=0
-        while i < len(decimal_list):
+        while i < len(self.decimal_list):
             if new_datablock:   
-                datablock = DataBlock(decimal_list[i],0,[]) # long is 0 because it will be calculated later
-                datablock.long = datablock.decode_long(decimal_list[i+1],decimal_list[i+2]) # calculate long
+                datablock = DataBlock(self.decimal_list[i]) # long is 0 because it will be calculated later
+                datablock.long = datablock.decode_long(self.decimal_list[i+1],self.decimal_list[i+2]) # calculate long
                 self.datablock_list.append(datablock) # add datablock to datablock_list
 
                 sum=sum+datablock.long
-                l=i+2 # l is the index of the first decimal of the record
+                l=i+3 # l is the index of the first decimal of the record
 
                 while l<i+datablock.long:
-                    self.datablock_list[n].record.append(decimal_list[l]) # add decimal to record
+                    self.datablock_list[n].record.append(self.decimal_list[l]) # add decimal to record
                     l=l+1
                 new_datablock=False # next decimal
-                n=n+1
+                n=n+1 # next datablock
             if i==sum-1:
                 new_datablock=True # next datablock
-            i=i+1
+            i=i+1 # next decimal
         return self.datablock_list
+    def divide_records(self):
+        for datablock in self.datablock_list:
+            datablock.record.divide_record()

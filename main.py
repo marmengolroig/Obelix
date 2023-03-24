@@ -11,12 +11,17 @@ path = (
 
 def main():
     file = AsterixFile(path[0])
-    file.divide_datablocks(file.read_file())
+    file.read_file()
+    file.divide_datablocks()
+    file.divide_records()
 
     print("Data blocks: "+str(file.retrieve_num_datablocks()))
     m = 0
     while m<3:
         print(file.datablock_list[m].record)
+        print(f'Fspec Length: {file.datablock_list[m].record.retrieve_fspec_length()}')
+        print(f'Data Fields: {file.datablock_list[m].record.retrieve_num_datafields()}')
+        
         m=m+1
 
 if __name__ == '__main__':
