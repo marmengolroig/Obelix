@@ -1,4 +1,4 @@
-from utils import *
+from ClassLibrary.utils import *
 
 # A class "Record" is declared with its attributes:
 # FSPEC - is a list of binary strings, each string represents a Field Specification (FSPEC) octet,
