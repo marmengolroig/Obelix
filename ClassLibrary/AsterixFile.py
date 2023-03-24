@@ -1,3 +1,5 @@
+from utils import *
+
 # A class "Record" is declared with its attributes:
 # FSPEC - is a list of binary strings, each string represents a Field Specification (FSPEC) octet,
 # DATAFIELD_LIST - is a list of decimal values, each value represents a Data Field (DF) octet. 
@@ -19,13 +21,13 @@ class Record:
     def divide_record(self):
         i=0
         while True:
-            bin_str = bin(self.record_decimal_list[i])[2:].zfill(8) # to binary
+            bin_str = decimal_to_bin_str(self.record_decimal_list[i]) # to binary
             self.fspec = self.fspec + bin_str # append binary string to fspec
             if bin_str[0] == '0':
                 self.fspec = self.fspec + bin_str # append binary string to fspec
                 break # end of fspec
             i+=1
-        bin_str = bin(self.record_decimal_list[i+1])[2:].zfill(8) # to binary
+        bin_str = decimal_to_bin_str(self.record_decimal_list[i+1]) # to binary
         self.fspec = self.fspec + bin_str # append binary string to fspec
         self.datafield_list = self.record_decimal_list[i+9:] # datafields are the rest of the record
 
@@ -46,7 +48,7 @@ class DataBlock:
         self.record = Record()
 
     def decode_long(self,decimal_1,decimal_2):
-        bin_str = bin(decimal_1)[2:].zfill(8)+bin(decimal_2)[2:].zfill(8)
+        bin_str = decimal_to_bin_str(decimal_1) + decimal_to_bin_str(decimal_2) 
         return int(bin_str,2)
 
 # A class "AsterixFile" is declared with its attributes: 
