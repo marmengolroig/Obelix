@@ -20,6 +20,7 @@ def main():
     while m<3:
         print(file.datablock_list[m].record)
         print(f'Fspec Length: {file.datablock_list[m].record.retrieve_fspec_length()}')
+        print(f'Data Items: {file.datablock_list[m].record.retrieve_num_dataitems()}')
         print(f'Data Fields: {file.datablock_list[m].record.retrieve_num_datafields()}')
         
         m=m+1

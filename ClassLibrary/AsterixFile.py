@@ -10,7 +10,7 @@ class Record:
         self.record_decimal_list = []
 
     def __str__(self) -> str:
-        return str(self.fspec) + str(self.datafield_list)
+        return self.fspec + str(self.datafield_list)
 
     def append(self,decimal): # append decimal to record (fspec or datafield)
         self.record_decimal_list.append(decimal)
@@ -23,13 +23,10 @@ class Record:
         while True:
             bin_str = decimal_to_bin_str(self.record_decimal_list[i]) # to binary
             self.fspec = self.fspec + bin_str # append binary string to fspec
-            if bin_str[0] == '0':
-                self.fspec = self.fspec + bin_str # append binary string to fspec
+            if bin_str[-1] == '0':
                 break # end of fspec
             i+=1
-        bin_str = decimal_to_bin_str(self.record_decimal_list[i+1]) # to binary
-        self.fspec = self.fspec + bin_str # append binary string to fspec
-        self.datafield_list = self.record_decimal_list[i+9:] # datafields are the rest of the record
+        self.datafield_list = self.record_decimal_list[i+1:] # datafields are the rest of the record
 
     def retrieve_num_datafields(self):
         return len(self.datafield_list)
@@ -37,6 +34,9 @@ class Record:
     def retrieve_fspec_length(self):
         return len(self.fspec)
 
+    def retrieve_num_dataitems(self):
+        return self.fspec.count('1')
+    
 # A class "DataBlock" is declared with its attributes: 
 # CAT (1 octet) - indicates the Category of the data block, 
 # LONG (2 octets) - indicates the number of octets of the data block (including CAT and LONG), and 
