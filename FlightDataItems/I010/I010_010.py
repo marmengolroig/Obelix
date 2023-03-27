@@ -1,24 +1,17 @@
 # Data Source Identifier (DSI) - I010/010
 # Fixed length: 2 octets
 
-from ClassLibrary.AsterixFile import DataItem
+class I010_010():
 
-class I010_010(DataItem):
-
-    def __init__(self, FRN, starting_octet):
-        super().__init__(FRN, starting_octet)
-        self.ref_no = 'I010/010'
-        self.long = 2
-        self.length_type = 0
-        self.dataitem = self
-        self.data = []
-
-    """ Data Source Identifier (DSI) """
-
-    def __init__(self):
+    def __init__(self, parent):
+        self.parent = parent
+        self.parent.ref_no = 'I010/010'
+        self.parent.long = 2
+        self.parent.length_type = 0 # 0: fixed, 1: extended, 2: repetitive, 3: compound
+        self.parent.dataitem = self
+        self.parent.data = []
         self.SAC = 0
         self.SIC = 0
-        
 
     def set_long(self):
         self.long = 2
