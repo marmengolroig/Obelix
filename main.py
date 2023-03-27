@@ -14,6 +14,7 @@ def main():
     file.read_file()
     file.divide_datablocks()
     file.divide_records()
+    # file.decode_dataitems()
 
     print("Data blocks: "+str(file.retrieve_num_datablocks()))
     m = 0

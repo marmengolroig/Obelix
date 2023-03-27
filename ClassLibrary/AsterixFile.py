@@ -1,5 +1,39 @@
 from ClassLibrary.utils import *
+from FlightDataItems.I010.I010_010 import I010_010
 
+dataitems = [I010_010()]
+
+# A class "DataItem" is declared with its attributes:
+# REF_NO- is the identifier of the data item,
+# LONG - is the length of the data item in octets,
+class DataItem:
+    def __init__(self, FRN, starting_octet):
+        self.ref_no = ''
+        self.FRN = FRN
+        self.long = 0
+        self.length_type = 0 # 0: fixed, 1: extended, 2: repetitive, 3: compound
+        self.dataitem = 0
+        self.data = []
+        self.starting_octet = starting_octet
+        
+    def retrieve_long(self):
+        return self.long
+    def retrieve_long_type(self):
+        return self.length_type
+    
+    def set_long_type(self, type):
+        self.length_type = self.dataitem.long_type
+
+    def set_dataitem(self):
+        # if self.FRN is 1:
+        self.dataitem = I010_010()
+    def set_data(self, data):
+        self.data = data
+    
+
+
+        
+    
 # A class "Record" is declared with its attributes:
 # FSPEC - is a list of binary strings, each string represents a Field Specification (FSPEC) octet,
 # DATAFIELD_LIST - is a list of decimal values, each value represents a Data Field (DF) octet. 
@@ -37,6 +71,26 @@ class Record:
     def retrieve_num_dataitems(self):
         return self.fspec.count('1')
     
+    def identify_dataitems(self): # trencar la llista datafield_list en dataitems
+        # mirar el index de la posicio dels 1s de fspec
+        # comprovar si index+1 es multiple de 8 o no
+        # si es multiple de 8, es un FX
+        # si no es multiple de 8, es un Dataitem
+            # llavors, s'haurà de mirar quin data item és
+
+#########################
+        FRN = 1 # CANVIAR!!
+        starting_octet = 0 # CANVIAR!!
+#########################
+        dataitem = DataItem(FRN, starting_octet)
+        dataitem.set_dataitem()
+        dataitem.dataitem.set_long(self.datafield_list)
+        # ja podem dividir el datafield_list en dataitems
+#########################
+        parsed_datafield_list = self.datafield_list[0:2] # CANVIAR!!
+#########################
+        dataitem.set_data(parsed_datafield_list)
+        
 # A class "DataBlock" is declared with its attributes: 
 # CAT (1 octet) - indicates the Category of the data block, 
 # LONG (2 octets) - indicates the number of octets of the data block (including CAT and LONG), and 
@@ -107,3 +161,5 @@ class AsterixFile:
     def divide_records(self):
         for datablock in self.datablock_list:
             datablock.record.divide_record()
+    def decode_dataitems(self):
+       pass
