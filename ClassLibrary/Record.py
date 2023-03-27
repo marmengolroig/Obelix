@@ -2,7 +2,7 @@
 # FSPEC - is a list of binary strings, each string represents a Field Specification (FSPEC) octet,
 # DATAFIELD_LIST - is a list of decimal values, each value represents a Data Field (DF) octet. 
 
-from ClassLibrary.utils import decimal_to_bin_str
+from ClassLibrary.utils import *
 from ClassLibrary.DataItem import DataItem
 
 class Record:
@@ -10,6 +10,7 @@ class Record:
         self.fspec = ''
         self.datafield_list = []
         self.record_decimal_list = []
+        self.dataitems_list = []
 
     def __str__(self) -> str:
         return self.fspec + str(self.datafield_list)
@@ -39,22 +40,18 @@ class Record:
     def retrieve_num_dataitems(self):
         return self.fspec.count('1')
     
-    def identify_dataitems(self): # trencar la llista datafield_list en dataitems
-        # mirar el index de la posicio dels 1s de fspec
-        # comprovar si index+1 es multiple de 8 o no
-        # si es multiple de 8, es un FX
-        # si no es multiple de 8, es un Dataitem
-            # llavors, s'haurà de mirar quin data item és
+    def identify_dataitems(self):
+        self.fspec = remove_char_in_positions(self.fspec,8) # remove FX, every 8th char
+        indexes = find_indexes_of_wanted_bit(self.fspec,'1') # find indexes of 1s
+        starting_octet = 0
+        sum = 0
+        for i,value in enumerate(self.fspec):
+            if i in indexes:
+                dataitem = DataItem(i+1, self.datafield_list[starting_octet:])
+                self.dataitems_list.append(dataitem)
+                sum +=1
+                if sum == 2:
+                    break
+            starting_octet = starting_octet + dataitem.retrieve_long()
 
-#########################
-        FRN = 1 # CANVIAR!!
-        starting_octet = 0 # CANVIAR!!
-#########################
-        dataitem = DataItem(FRN, starting_octet)
-#         dataitem.dataitem.set_long(self.datafield_list)
-#         # ja podem dividir el datafield_list en dataitems
-# #########################
-#         parsed_datafield_list = self.datafield_list[0:2] # CANVIAR!!
-# #########################
-#         dataitem.set_data(parsed_datafield_list)
-        return dataitem
+        return self.dataitems_list

@@ -6,15 +6,18 @@ class I010_010():
     def __init__(self, parent):
         self.parent = parent
         self.parent.ref_no = 'I010/010'
-        self.parent.long = 2
+        self.parent.long = self.set_long()
         self.parent.length_type = 0 # 0: fixed, 1: extended, 2: repetitive, 3: compound
         self.parent.dataitem = self
-        self.parent.data = []
+        self.data = self.set_data()
         self.SAC = 0
         self.SIC = 0
 
     def set_long(self):
-        self.long = 2
+        return 2
+    
+    def set_data(self):
+        return self.parent.data_list[0:self.parent.long]
 
     def decode(self, record):
         """ Decode Data Source Identifier (DSI) field """
