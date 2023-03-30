@@ -1,6 +1,8 @@
 # Data Source Identifier (DSI) - I010/010
 # Fixed length: 2 octets
 
+from ClassLibrary.utils import *
+
 class I010_010():
 
     def __init__(self, parent):
@@ -10,55 +12,16 @@ class I010_010():
         self.parent.length_type = 0 # 0: fixed, 1: extended, 2: repetitive, 3: compound
         self.parent.dataitem = self
         self.data = self.set_data()
-        self.SAC = 0
-        self.SIC = 0
+        self.decoded_data = self.decode_data()
+        # self.SAC = self.decode_data()[0]
+        # self.SIC = self.decode_data()[1]
 
     def set_long(self):
         return 2
     
     def set_data(self):
         return self.parent.data_list[0:self.parent.long]
-
-    def decode(self, record):
-        """ Decode Data Source Identifier (DSI) field """
-
-        # Get the first octet
-        first_octet = record[0]
-        # Get the second octet
-        second_octet = record[1]
-        # Get the first 2 bits
-        first_2_bits = first_octet[0:2]
-        # Get the next 6 bits
-        next_6_bits = first_octet[2:8]
-        # Get the next 8 bits
-        next_8_bits = second_octet[0:8]
-        # Get the last 8 bits
-        last_8_bits = second_octet[8:16]
-        # Get the first 2 bits
-        first_2_bits = first_octet[0:2]
-        # Get the next 6 bits
-        next_6_bits = first_octet[2:8]
-        # Get the next 8 bits
-        next_8_bits = second_octet[0:8]
-        # Get the last 8 bits
-        last_8_bits = second_octet[8:16]
-        # Get the first 2 bits
-        first_2_bits = first_octet[0:2]
-        # Get the next 6 bits
-        next_6_bits = first_octet[2:8]
-        # Get the next 8 bits
-        next_8_bits = second_octet[0:8]
-        # Get the last 8 bits
-        last_8_bits = second_octet[8:16]
-        # Get the first 2 bits
-        first_2_bits = first_octet[0:2]
-        # Get the next 6 bits
-        next_6_bits = first_octet[2:8]
-        # Get the next 8 bits
-        next_8_bits = second_octet[0:8]
-        # Get the last 8 bits
-        last_8_bits = second_octet[8:16]
-        # Get the first 2 bits
-        first_2_bits = first_octet[0:2]
-        # Get the next 6 bits
-        next_6_bits = first_octet[2:8]
+    
+    def decode_data(self):
+        return (self.data[0],self.data[1])
+    

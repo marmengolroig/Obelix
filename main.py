@@ -14,17 +14,21 @@ def main():
     file.read_file()
     file.divide_datablocks()
     file.divide_records()
-    # file.decode_dataitems()
+    file.decode_dataitems()
     
 
     print("Data blocks: "+str(file.retrieve_num_datablocks()))
     m = 0
-    while m<6:
+    while m<2:
         print(file.datablock_list[m].record)
         print(f'Fspec Length: {file.datablock_list[m].record.retrieve_fspec_length()}')
-        print(f'Data Items that are present +  FXs: {file.datablock_list[m].record.retrieve_num_dataitems()}')
+        print(f'Number of "1" in FSPEC: {file.datablock_list[m].record.retrieve_num_ones_fspec()}')
         print(f'Data Fields: {file.datablock_list[m].record.retrieve_num_datafields()}')
-        print(f'Dataitems list: {file.datablock_list[m].record.identify_dataitems()[1].retrieve_data()}')
+        n = 0
+        dataitems_list = file.datablock_list[m].record.decode_dataitems()
+        while n<3:
+            print(f'Dataitem {n+1}: {dataitems_list[n].dataitem.decode_data()}')
+            n=n+1
         m=m+1
 
 if __name__ == '__main__':

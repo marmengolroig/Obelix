@@ -14,3 +14,6 @@ def find_indexes_of_wanted_bit(string,bit):
         if char == bit:
             indices.append(i)
     return indices
+
+def read_as_decimal_from_bottom(bin_str):
+    return int(bin_str[::-1], 2)

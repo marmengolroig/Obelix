@@ -37,20 +37,20 @@ class Record:
     def retrieve_fspec_length(self):
         return len(self.fspec)
 
-    def retrieve_num_dataitems(self):
+    def retrieve_num_ones_fspec(self):
         return self.fspec.count('1')
     
-    def identify_dataitems(self):
+    def decode_dataitems(self):
         self.fspec = remove_char_in_positions(self.fspec,8) # remove FX, every 8th char
         indexes = find_indexes_of_wanted_bit(self.fspec,'1') # find indexes of 1s
         starting_octet = 0
         sum = 0
         for i,value in enumerate(self.fspec):
             if i in indexes:
-                dataitem = DataItem(i+1, self.datafield_list[starting_octet:])
+                dataitem = DataItem(i+1, self.datafield_list[starting_octet:]) # create dataitem
                 self.dataitems_list.append(dataitem)
                 sum +=1
-                if sum == 2:
+                if sum == 3:
                     break
             starting_octet = starting_octet + dataitem.retrieve_long()
 
