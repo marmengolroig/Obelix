@@ -50,7 +50,7 @@ class Record:
                 dataitem = DataItem(i+1, self.datafield_list[starting_octet:]) # create dataitem
                 self.dataitems_list.append(dataitem)
                 sum +=1
-                if sum == 3:
+                if sum == 4:
                     break
             starting_octet = starting_octet + dataitem.retrieve_long()
 

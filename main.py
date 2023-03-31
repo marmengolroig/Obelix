@@ -19,14 +19,14 @@ def main():
 
     print("Data blocks: "+str(file.retrieve_num_datablocks()))
     m = 0
-    while m<2:
+    while m<1:
         print(file.datablock_list[m].record)
         print(f'Fspec Length: {file.datablock_list[m].record.retrieve_fspec_length()}')
         print(f'Number of "1" in FSPEC: {file.datablock_list[m].record.retrieve_num_ones_fspec()}')
         print(f'Data Fields: {file.datablock_list[m].record.retrieve_num_datafields()}')
         n = 0
         dataitems_list = file.datablock_list[m].record.decode_dataitems()
-        while n<3:
+        while n<4:
             print(f'Dataitem {n+1}: {dataitems_list[n].dataitem.decode_data()}')
             n=n+1
         m=m+1
