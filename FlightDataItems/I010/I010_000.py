@@ -24,14 +24,13 @@ class I010_000():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        MTcode = self.data[0]
         MTstring = ''
-        if MTcode == 1:
+        if self.data[0] == 1:
             MTstring = 'Target Report'
-        elif MTcode == 2:
+        elif self.data[0] == 2:
             MTstring = 'Start of Update Cycle'
-        elif MTcode == 3:
+        elif self.data[0] == 3:
             MTstring = 'Periodic Status Message'
-        elif MTcode == 4:
+        elif self.data[0] == 4:
             MTstring = 'Event Triggered Status Message'
-        return (MTcode, MTstring)
+        return MTstring
