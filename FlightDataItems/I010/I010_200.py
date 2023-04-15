@@ -22,8 +22,9 @@ class I010_200():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
+        print(self.data)
         ground_speed = decimal_to_bin_str(self.data[0])+decimal_to_bin_str(self.data[1])
-        ground_speed = int(ground_speed,2)/2^-14  # kt
+        ground_speed = int(ground_speed,2)*7200/(2*16384)  # kt
         track_angle = decimal_to_bin_str(self.data[2])+decimal_to_bin_str(self.data[3])
-        track_angle = int(track_angle,2)/2^16  # deg
+        track_angle = int(track_angle,2)*360/65536  # deg
         return (ground_speed,track_angle)

@@ -23,5 +23,6 @@ class I010_010():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
+        print(self.data)
         return (self.data[0],self.data[1])
     

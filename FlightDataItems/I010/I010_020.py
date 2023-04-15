@@ -26,6 +26,7 @@ class I010_020():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
+        print(self.data)
         bin_str = decimal_to_bin_str(self.data[0])
         TYP = bin_str[0:3]
         if TYP == '000':

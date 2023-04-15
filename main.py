@@ -26,7 +26,7 @@ def main():
         print(f'Data Fields: {file.datablock_list[m].record.retrieve_num_datafields()}')
         n = 0
         dataitems_list = file.datablock_list[m].record.decode_dataitems()
-        while n<4:
+        while n<11:
             print(f'Dataitem {n+1}: {dataitems_list[n].dataitem.decode_data()}')
             n=n+1
         m=m+1

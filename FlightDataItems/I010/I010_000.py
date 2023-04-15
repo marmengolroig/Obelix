@@ -24,6 +24,7 @@ class I010_000():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
+        print(self.data)
         MTstring = ''
         if self.data[0] == 1:
             MTstring = 'Target Report'
