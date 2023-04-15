@@ -13,6 +13,7 @@ from FlightDataItems.I010.I010_202 import I010_202
 from FlightDataItems.I010.I010_161 import I010_161
 from FlightDataItems.I010.I010_170 import I010_170
 from FlightDataItems.I010.I010_270 import I010_270
+from FlightDataItems.I010.I010_210 import I010_210
 
 
 class DataItem:
@@ -51,6 +52,8 @@ class DataItem:
             return I010_170(self)
         elif self.FRN == 19:
             return I010_270(self)
+        elif self.FRN == 25:
+            return I010_210(self)
         
     def retrieve_datalist(self):
         return self.data_list
