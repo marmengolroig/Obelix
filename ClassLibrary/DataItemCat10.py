@@ -18,7 +18,7 @@ from FlightDataItems.I010.I010_041 import I010_041
 from FlightDataItems.I010.I010_220 import I010_220
 
 
-class DataItem:
+class DataItemCat10:
     def __init__(self, FRN, data_list):
         self.ref_no = ''
         self.FRN = FRN

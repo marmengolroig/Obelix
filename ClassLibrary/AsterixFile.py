@@ -37,7 +37,7 @@ class AsterixFile:
         n=0
         while i < len(self.decimal_list):
             if new_datablock:   
-                datablock = DataBlock(self.decimal_list[i]) # long is 0 because it will be calculated later
+                datablock = DataBlock(self.decimal_list[i]) # cat
                 datablock.long = datablock.decode_long(self.decimal_list[i+1],self.decimal_list[i+2]) # calculate long
                 self.datablock_list.append(datablock) # add datablock to datablock_list
 
@@ -57,6 +57,6 @@ class AsterixFile:
         for datablock in self.datablock_list:
             datablock.record.divide_record()
     def decode_dataitems(self):
-        self.datablock_list[0].record.decode_dataitems()
+        self.datablock_list[0].decode_record()
     #    for datablock in self.datablock_list:
     #        datablock.record.decode_dataitems()

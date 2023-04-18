@@ -10,7 +10,7 @@ path = (
     'Ficheros_asterix/201002-lebl-080001_smr_mlat_adsb.ast') # mixed
 
 def main():
-    file = AsterixFile(path[3])
+    file = AsterixFile(path[1])
     file.read_file()
     file.divide_datablocks()
     file.divide_records()
@@ -19,14 +19,15 @@ def main():
 
     print("Data blocks: "+str(file.retrieve_num_datablocks()))
     m = 0
-    while m<1:
+    while m<1:  
         print(file.datablock_list[m].record)
-        print(f'Fspec Length: {file.datablock_list[m].record.retrieve_fspec_length()}')
-        print(f'Number of "1" in FSPEC: {file.datablock_list[m].record.retrieve_num_ones_fspec()}')
-        print(f'Data Fields: {file.datablock_list[m].record.retrieve_num_datafields()}')
+        print(f'Datablock Lenght: {file.datablock_list[m].long}' )
+        print(f'Fspec #FRNs: {file.datablock_list[m].record.retrieve_fspec_length()}')
+        print(f'Record #DataItems: {file.datablock_list[m].record.retrieve_num_ones_fspec()}')
+        print(f'Record #DataFields: {file.datablock_list[m].record.retrieve_num_datafields()}')
         n = 0
-        dataitems_list = file.datablock_list[m].record.decode_dataitems()
-        while n<12:
+        dataitems_list = file.datablock_list[m].decode_record()
+        while n<1:
             print(f'Dataitem {n+1}: {dataitems_list[n].dataitem.decode_data()}')
             n=n+1
         m=m+1
