@@ -7,7 +7,7 @@ class I010_090():
 
     def __init__(self, parent):
         self.parent = parent
-        self.parent.ref_no = 'I010/210'
+        self.parent.ref_no = 'I010/090'
         self.parent.long = self.set_long()
         self.parent.length_type = 0 # 0: fixed, 1: extended, 2: repetitive, 3: compound
         self.parent.dataitem = self
