@@ -10,7 +10,7 @@ path = (
     'Ficheros_asterix/201002-lebl-080001_smr_mlat_adsb.ast') # mixed
 
 def main():
-    file = AsterixFile(path[3])
+    file = AsterixFile(path[1])
     file.read_file()
     file.divide_datablocks()
     file.divide_records()
@@ -27,7 +27,7 @@ def main():
         print(f'Record #DataFields: {file.datablock_list[m].record.retrieve_num_datafields()}')
         n = 0
         dataitems_list = file.datablock_list[m].decode_record()
-        while n<12:
+        while n<1:
             print(f'Dataitem {n+1}: {dataitems_list[n].dataitem.decode_data()}')
             n=n+1
         m=m+1
