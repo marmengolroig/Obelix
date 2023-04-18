@@ -3,7 +3,9 @@
 # DATAFIELD_LIST - is a list of decimal values, each value represents a Data Field (DF) octet. 
 
 from ClassLibrary.utils import *
-from ClassLibrary.DataItem import DataItem
+from ClassLibrary.DataItemCat10 import DataItemCat10
+from ClassLibrary.DataItemCat21 import DataItemCat21
+
 
 class Record:
     def __init__(self):
@@ -40,7 +42,7 @@ class Record:
     def retrieve_num_ones_fspec(self):
         return self.fspec.count('1')
     
-    def decode_dataitems(self):
+    def decode_cat10(self):
         self.fspec = remove_char_in_positions(self.fspec,8) # remove FX, every 8th char
         indexes = find_indexes_of_wanted_bit(self.fspec,'1') # find indexes of 1s
         starting_octet = 0
@@ -48,12 +50,26 @@ class Record:
         for i,value in enumerate(self.fspec):
             if i in indexes:
                 print(i+1)
-                dataitem = DataItem(i+1, self.datafield_list[starting_octet:]) # create dataitem
+                dataitem = DataItemCat10(i+1, self.datafield_list[starting_octet:]) # create dataitem
                 self.dataitems_list.append(dataitem)
                 starting_octet = starting_octet + dataitem.retrieve_long()
                 sum +=1
-                if sum == 11:
+                if sum == 1:
                     break
-                
-
+        return self.dataitems_list
+    
+    def decode_cat21(self):
+        self.fspec = remove_char_in_positions(self.fspec,8) # remove FX, every 8th char
+        indexes = find_indexes_of_wanted_bit(self.fspec,'1') # find indexes of 1s
+        starting_octet = 0
+        sum = 0
+        for i,value in enumerate(self.fspec):
+            if i in indexes:
+                print(i+1)
+                dataitem = DataItemCat21(i+1, self.datafield_list[starting_octet:]) # create dataitem
+                self.dataitems_list.append(dataitem)
+                starting_octet = starting_octet + dataitem.retrieve_long()
+                sum +=1
+                if sum == 1:
+                    break
         return self.dataitems_list
