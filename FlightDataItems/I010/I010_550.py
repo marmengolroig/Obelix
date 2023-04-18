@@ -1,4 +1,4 @@
-# Measured Height - I010/550
+# System Status - I010/550
 # Fixed length: 1 octets
 
 from ClassLibrary.utils import *
