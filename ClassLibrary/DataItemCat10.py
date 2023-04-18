@@ -16,6 +16,9 @@ from FlightDataItems.I010.I010_270 import I010_270
 from FlightDataItems.I010.I010_210 import I010_210
 from FlightDataItems.I010.I010_041 import I010_041
 from FlightDataItems.I010.I010_220 import I010_220
+from FlightDataItems.I010.I010_060 import I010_060
+from FlightDataItems.I010.I010_090 import I010_090
+from FlightDataItems.I010.I010_245 import I010_245
 
 
 class DataItemCat10:
@@ -54,8 +57,14 @@ class DataItemCat10:
             return I010_161(self)
         elif self.FRN == 11:
             return I010_170(self)
+        elif self.FRN == 12:
+            return I010_060
         elif self.FRN == 13:
             return I010_220(self)
+        elif self.FRN == 14:
+            return I010_245(self)
+        elif self.FRN == 17:
+            return I010_090(self)
         elif self.FRN == 19:
             return I010_270(self)
         elif self.FRN == 25:
