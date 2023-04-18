@@ -15,3 +15,9 @@ class DataBlock:
     def decode_long(self,decimal_1,decimal_2):
         bin_str = decimal_to_bin_str(decimal_1) + decimal_to_bin_str(decimal_2) 
         return int(bin_str,2)
+    
+    def decode_record(self):
+        if self.cat == 10:
+            return self.record.decode_cat10()
+        elif self.cat == 21:
+            return self.record.decode_cat21()
