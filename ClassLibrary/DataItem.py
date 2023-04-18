@@ -14,6 +14,8 @@ from FlightDataItems.I010.I010_161 import I010_161
 from FlightDataItems.I010.I010_170 import I010_170
 from FlightDataItems.I010.I010_270 import I010_270
 from FlightDataItems.I010.I010_210 import I010_210
+from FlightDataItems.I010.I010_041 import I010_041
+from FlightDataItems.I010.I010_220 import I010_220
 
 
 class DataItem:
@@ -38,6 +40,8 @@ class DataItem:
             return I010_020(self)
         elif self.FRN == 4:
             return I010_140(self)
+        elif self.FRN == 5:
+            return I010_041(self)
         elif self.FRN == 6:
             return I010_040(self)
         elif self.FRN == 7:
@@ -50,10 +54,13 @@ class DataItem:
             return I010_161(self)
         elif self.FRN == 11:
             return I010_170(self)
+        elif self.FRN == 13:
+            return I010_220(self)
         elif self.FRN == 19:
             return I010_270(self)
         elif self.FRN == 25:
             return I010_210(self)
+        
         
     def retrieve_datalist(self):
         return self.data_list

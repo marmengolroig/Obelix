@@ -43,3 +43,85 @@ def read_in_twos_complement(binary):
     else:
         decimal_number = int(binary, 2)
     return decimal_number
+
+def read_character(binary):
+    if binary == '000001':
+        char = 'A'
+    elif binary == '000010':
+        char = 'B'
+    elif binary == '000011':
+        char = 'C'
+    elif binary == '000100':
+        char = 'D'
+    elif binary == '000101':
+        char = 'E'
+    elif binary == '000110':
+        char = 'F'
+    elif binary == '000111':
+        char = 'G'
+    elif binary == '001000':
+        char = 'H'
+    elif binary == '001001':
+        char = 'I'
+    elif binary == '001010':
+        char = 'J'
+    elif binary == '001011':
+        char = 'K'
+    elif binary == '001100':
+        char = 'L'
+    elif binary == '001101':
+        char = 'M'
+    elif binary == '001110':
+        char = 'N'
+    elif binary == '001111':
+        char = 'O'
+    elif binary == '010000':
+        char = 'P'
+    elif binary == '010001':
+        char = 'Q'
+    elif binary == '010010':
+        char = 'R'
+    elif binary == '010011':
+        char = 'S'
+    elif binary == '010100':
+        char = 'T'
+    elif binary == '010101':
+        char = 'U'
+    elif binary == '010110':
+        char = 'V'
+    elif binary == '010111':
+        char = 'W'
+    elif binary == '011000':
+        char = 'X'
+    elif binary == '011001':
+        char = 'Y'
+    elif binary == '011010':
+        char = 'Z'
+
+    elif binary == '100000':
+        char = ' '
+
+    elif binary == '110000':
+        char = '0'
+    elif binary == '110001':
+        char = '1'
+    elif binary == '110010':
+        char = '2'
+    elif binary == '110011':
+        char = '3'
+    elif binary == '110100':
+        char = '4'
+    elif binary == '110101':
+        char = '5'
+    elif binary == '110110':
+        char = '6'
+    elif binary == '110111':
+        char = '7'
+    elif binary == '111000':
+        char = '8'
+    elif binary == '111001':
+        char = '9'
+    else:
+        char = ''
+
+    return(char)
