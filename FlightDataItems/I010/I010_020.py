@@ -1,3 +1,4 @@
+# CAT 10
 # Target Report Descriptor (TRD) - (I010/020)
 # Extended length.
 

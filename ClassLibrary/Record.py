@@ -32,6 +32,7 @@ class Record:
                 break # end of fspec
             i+=1
         self.datafield_list = self.record_decimal_list[i+1:] # datafields are the rest of the record
+        return (self.fspec,self.datafield_list)
 
     def retrieve_num_datafields(self):
         return len(self.datafield_list)
@@ -49,7 +50,6 @@ class Record:
         sum = 0
         for i,value in enumerate(self.fspec):
             if i in indexes:
-                print(i+1)
                 dataitem = DataItemCat10(i+1, self.datafield_list[starting_octet:]) # create dataitem
                 self.dataitems_list.append(dataitem)
                 starting_octet = starting_octet + dataitem.retrieve_long()
@@ -65,11 +65,10 @@ class Record:
         sum = 0
         for i,value in enumerate(self.fspec):
             if i in indexes:
-                print(i+1)
                 dataitem = DataItemCat21(i+1, self.datafield_list[starting_octet:]) # create dataitem
                 self.dataitems_list.append(dataitem)
                 starting_octet = starting_octet + dataitem.retrieve_long()
                 sum +=1
-                if sum == 1:
+                if sum == 2:
                     break
         return self.dataitems_list
