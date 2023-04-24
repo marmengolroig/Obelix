@@ -36,6 +36,6 @@ class I010_090():
         elif G == '1':
             G = 'Garbled Code'
 
-        FL = int(self.data[2:16],2)/4
+        FL = int(binary[2:16],2)/4
         
         return (V, G, FL)

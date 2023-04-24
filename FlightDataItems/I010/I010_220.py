@@ -22,6 +22,9 @@ class I010_220():
     
     def decode_data(self):
         print(self.data)
-        target_adress = concatenate_decimals_in_binary(self.data)
-        return (target_adress)
+        ch1 = read_character(concatenate_decimals_in_binary(self.data)[0:6])
+        ch2 = read_character(concatenate_decimals_in_binary(self.data)[6:12])
+        ch3 = read_character(concatenate_decimals_in_binary(self.data)[12:18])
+        ch4 = read_character(concatenate_decimals_in_binary(self.data)[18:24])
+        return ch1+ch2+ch3+ch4
     

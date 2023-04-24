@@ -42,7 +42,7 @@ class I010_060():
         elif L == '1':
             L = 'Mode-3/A code not extracted during the last scan'
 
-        octal_reply = oct(int(binary[4:16],2))
+        octal_reply = decimal_to_four_digit_octal(int(binary[4:16],2))
 
         return (V, G, L, octal_reply)
     
