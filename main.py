@@ -10,7 +10,7 @@ path = (
     'Ficheros_asterix/201002-lebl-080001_smr_mlat_adsb.ast') # mixed
 
 def main():
-    file = AsterixFile(path[2])
+    file = AsterixFile(path[1])
     file.read_file()
     file.divide_datablocks()
     file.divide_records()
