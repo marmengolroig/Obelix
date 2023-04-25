@@ -3,6 +3,7 @@
 # LONG - is the length of the data item in octets,
 
 from FlightDataItems.I021.I021_010 import I021_010
+from FlightDataItems.I021.I021_040 import I021_040
 
 
 
@@ -22,6 +23,8 @@ class DataItemCat21:
     def create_dataitem(self):
         if self.FRN == 1:
             return I021_010(self)
+        elif self.FRN == 2:
+            return I021_040(self)
         
         
     def retrieve_datalist(self):
