@@ -125,3 +125,25 @@ def read_character(binary):
         char = ''
 
     return(char)
+
+def decimal_to_four_digit_octal(decimal):
+    octal = 0
+    count = 1
+
+    while decimal > 0:
+        r = decimal % 8
+        octal += r * count
+        count *= 10
+        decimal = decimal // 8
+
+    octal = str(octal)
+
+    if len(octal) < 4:
+        if len(octal) == 3:
+            octal = '0'+ octal
+        elif len(octal) == 2:
+            octal = '00'+ octal
+        elif len(octal) == 1:
+            octal = '000'+ octal
+    
+    return(octal)

@@ -10,7 +10,7 @@ path = (
     'Ficheros_asterix/201002-lebl-080001_smr_mlat_adsb.ast') # mixed
 
 def main():
-    file = AsterixFile(path[1])
+    file = AsterixFile(path[2])
     file.read_file()
     file.divide_datablocks()
     file.divide_records()
@@ -18,8 +18,8 @@ def main():
     
 
     print("Data blocks: "+str(file.retrieve_num_datablocks()))
-    m = 0
-    while m<1:  
+    m = 1
+    while m<2:  
         print(file.datablock_list[m].record)
         print(f'Datablock Lenght: {file.datablock_list[m].long}' )
         print(f'Fspec #FRNs: {file.datablock_list[m].record.retrieve_fspec_length()}')
