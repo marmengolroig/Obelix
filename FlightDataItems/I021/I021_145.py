@@ -1,4 +1,4 @@
-# Mode 3/A Code in Octal Representation - I021/145
+# Flight Level - I021/145
 # Fixed length: 2 octets
 
 from ClassLibrary.utils import *
