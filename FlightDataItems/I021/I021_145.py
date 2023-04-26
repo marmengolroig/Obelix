@@ -1,13 +1,13 @@
-# Mode 3/A Code in Octal Representation - I021/070
+# Mode 3/A Code in Octal Representation - I021/145
 # Fixed length: 2 octets
 
 from ClassLibrary.utils import *
 
-class I021_070():
+class I021_145():
 
     def __init__(self, parent):
         self.parent = parent
-        self.parent.ref_no = 'I021/070'
+        self.parent.ref_no = 'I021/145'
         self.parent.long = self.set_long()
         self.parent.length_type = 0 # 0: fixed, 1: extended, 2: repetitive, 3: compound
         self.parent.dataitem = self
@@ -21,9 +21,7 @@ class I021_070():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
         binary=concatenate_decimals_in_binary(self.data)
-        decimal = int(binary[4:16],2)
-        octal = decimal_to_four_digit_octal(decimal)
+        fl = int(binary,2)/4
         
-        return (octal)
+        return (fl)
