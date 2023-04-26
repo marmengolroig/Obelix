@@ -9,6 +9,7 @@ from FlightDataItems.I021.I021_015 import I021_015
 from FlightDataItems.I021.I021_130 import I021_130
 from FlightDataItems.I021.I021_131 import I021_131
 from FlightDataItems.I021.I021_080 import I021_080
+from FlightDataItems.I021.I021_073 import I021_073
 
 
 
@@ -40,6 +41,8 @@ class DataItemCat21:
             return I021_131(self)
         elif self.FRN == 11:
             return I021_080(self)
+        elif self.FRN == 12:
+            return I021_073(self)
         
         
     def retrieve_datalist(self):
