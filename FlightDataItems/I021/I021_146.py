@@ -1,4 +1,4 @@
-# Emitter Category - I021/146
+# Selected Altitude - I021/146
 # Fixed length: 2 octets
 
 from ClassLibrary.utils import *
