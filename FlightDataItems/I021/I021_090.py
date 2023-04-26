@@ -1,5 +1,5 @@
 # Time of Message Reception for Velocity - I021/090
-# Fixed length: 3 octets
+# Variable length
 
 from ClassLibrary.utils import *
 
