@@ -69,6 +69,6 @@ class Record:
                 self.dataitems_list.append(dataitem)
                 starting_octet = starting_octet + dataitem.retrieve_long()
                 sum +=1
-                if sum == 18:
+                if sum == 20:
                     break
         return self.dataitems_list
