@@ -1,6 +1,6 @@
-# Receiver ID - I021/295
+# Time of Message Reception for Velocity - I021/295
 # Compound length
-
+subfield_list = []
 from ClassLibrary.utils import *
 
 class I021_295():
@@ -13,20 +13,21 @@ class I021_295():
         self.parent.dataitem = self
         self.data = self.set_data()
         self.decoded_data = self.decode_data()
-        self.subfield_list = [AOS,TRD,M3A,QI,TI1,MAM,GH,FX1,FL,ISA,FSA,AS,TAS,MH,BVR,FX2,GVR,GV,TAR,TI2,TS,MET,ROA,FX3,ARA,SCC]
-        self.present_subfield_list = []
 
     def set_long(self):
-        binary = self.parent.data_list[0:4]
+        binary = concatenate_decimals_in_binary(self.parent.data_list[0:4])
         long = 4
         i = 0
         while i < len(binary):
 
             if binary[i] == '1':
-                if int(binary[i]) % 8 != 0:
+                if (i+1) % 8 != 0:
                     long += 1
-                    self.present_subfield_list.append(i)
-
+                    subfield_list.append(1)
+            else:
+                if (i+1) % 8 != 0:
+                    long += 1
+                    subfield_list.append(-1)
             i += 1
         return long
     
@@ -34,9 +35,16 @@ class I021_295():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        
-        i = 0
-        while i < len(self.subfield_list):
-            if self.subfield_list(i)
+        binary = concatenate_decimals_in_binary(self.data[4:self.parent.long])
 
-        return 
+        i = 0
+        j = 0
+        while i < len(subfield_list):
+            if subfield_list[i] == 1:
+                subfield = binary[j:j+8]
+                subfield_list[i] = int(subfield,2)*0.1
+                j+=8
+            i +=1
+
+
+        return subfield_list
