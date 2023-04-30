@@ -21,10 +21,12 @@ class I010_220():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
-        ch1 = read_character(concatenate_decimals_in_binary(self.data)[0:6])
-        ch2 = read_character(concatenate_decimals_in_binary(self.data)[6:12])
-        ch3 = read_character(concatenate_decimals_in_binary(self.data)[12:18])
-        ch4 = read_character(concatenate_decimals_in_binary(self.data)[18:24])
-        return ch1+ch2+ch3+ch4
+        binary = concatenate_decimals_in_binary(self.data)
+        ch1 = four_bit_to_char(binary[0:4])
+        ch2 = four_bit_to_char(binary[4:8])
+        ch3 = four_bit_to_char(binary[8:12])
+        ch4 = four_bit_to_char(binary[12:16])
+        ch5 = four_bit_to_char(binary[16:20])
+        ch6 = four_bit_to_char(binary[20:24])
+        return ch1+ch2+ch3+ch4+ch5+ch6
     

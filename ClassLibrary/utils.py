@@ -147,3 +147,38 @@ def decimal_to_four_digit_octal(decimal):
             octal = '000'+ octal
     
     return(octal)
+
+def four_bit_to_char(binary):
+    if binary == '0000':
+        char = '0'
+    elif binary == '0001':
+        char = '1'
+    elif binary == '0010':
+        char = '2'
+    elif binary == '0011':
+        char = '3'
+    elif binary == '0100':
+        char = '4'
+    elif binary == '0101':
+        char = '5'
+    elif binary == '0110':
+        char = '6'
+    elif binary == '0111':
+        char = '7'
+    elif binary == '1000':
+        char = '8'
+    elif binary == '1001':
+        char = '9'
+    elif binary == '1010':
+        char = 'A'
+    elif binary == '1011':
+        char = 'B'
+    elif binary == '1100':
+        char = 'C'
+    elif binary == '1101':
+        char = 'D'
+    elif binary == '1110':
+        char = 'E'
+    elif binary == '1111':
+        char = 'F'
+    return char

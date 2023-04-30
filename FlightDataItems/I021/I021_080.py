@@ -21,11 +21,11 @@ class I021_080():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
         binary = concatenate_decimals_in_binary(self.data)
-        char1 = read_character(binary[0:6])
-        char2 = read_character(binary[6:12])
-        char3 = read_character(binary[12:18])
-        char4 = read_character(binary[18:24])
-        
-        return (char1+char2+char3+char4)
+        ch1 = four_bit_to_char(binary[0:4])
+        ch2 = four_bit_to_char(binary[4:8])
+        ch3 = four_bit_to_char(binary[8:12])
+        ch4 = four_bit_to_char(binary[12:16])
+        ch5 = four_bit_to_char(binary[16:20])
+        ch6 = four_bit_to_char(binary[20:24])
+        return ch1+ch2+ch3+ch4+ch5+ch6
