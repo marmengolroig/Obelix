@@ -21,6 +21,7 @@ class I021_020():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
+        msg = ''
         if self.data[0] == 0:
             msg='No ADS-B Emitter Category Information'
         elif self.data[0] == 1:
@@ -72,5 +73,4 @@ class I021_020():
         elif self.data[0] == 24:
             msg='line obstacle'
 
-        
         return msg

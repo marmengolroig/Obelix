@@ -29,6 +29,7 @@ from FlightDataItems.I021.I021_132 import I021_132
 from FlightDataItems.I021.I021_400 import I021_400
 from FlightDataItems.I021.I021_295 import I021_295
 from FlightDataItems.I021.I021_RE import I021_RE
+from FlightDataItems.I021.I021_071 import I021_071
 
 
 class DataItemCat21:
@@ -53,6 +54,8 @@ class DataItemCat21:
             return I021_161(self)
         elif self.FRN == 4:
             return I021_015(self)
+        elif self.FRN == 5:
+            return I021_071(self)
         elif self.FRN == 6:
             return I021_130(self)
         elif self.FRN == 7:
