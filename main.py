@@ -18,8 +18,8 @@ def main():
     
 
     print("Data blocks: "+str(file.retrieve_num_datablocks()))
-    m = 1
-    while m<2:   # datablocks in a file
+    m = 5
+    while m<6:   # datablocks in a file
         print('-------------------------------')
         print(f'Datablock ID: {m+1}')
         print(file.datablock_list[m].record)
@@ -30,7 +30,7 @@ def main():
         print(f'Record #DataFields: {file.datablock_list[m].record.retrieve_num_datafields()}')
         n = 0
         dataitems_list = file.datablock_list[m].decode_record()
-        while n<27: # dataitems in a datablock
+        while n<20: # dataitems in a datablock
             print('---')
             print(f'Dataitem FRN: {dataitems_list[n].FRN}')
             print(f'Dataitem Data: {dataitems_list[n].dataitem.data}')

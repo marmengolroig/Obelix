@@ -1,4 +1,4 @@
-# Time of Message Reception for Velocity - I021/295
+# Data Ages - I021/295
 # Compound length
 subfield_list = []
 from ClassLibrary.utils import *
@@ -13,10 +13,16 @@ class I021_295():
         self.parent.dataitem = self
         self.data = self.set_data()
         self.decoded_data = self.decode_data()
+    
 
     def set_long(self):
-        binary = concatenate_decimals_in_binary(self.parent.data_list[0:4])
-        long = 4
+        primary_long = 0
+        for decimal in self.parent.data_list[0:4]:
+            primary_long = primary_long + 1
+            if decimal % 2 == 0:
+                break
+        binary = concatenate_decimals_in_binary(self.parent.data_list[0:primary_long])
+        long = primary_long
         i = 0
         while i < len(binary):
 
@@ -35,16 +41,20 @@ class I021_295():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        binary = concatenate_decimals_in_binary(self.data[4:self.parent.long])
+        primary_long = 0
+        for decimal in self.parent.data_list[0:4]:
+            primary_long = primary_long + 1
+            if decimal % 2 == 0:
+                break
+        binary = concatenate_decimals_in_binary(self.data[primary_long:self.parent.long])
 
         i = 0
         j = 0
         while i < len(subfield_list):
             if subfield_list[i] == 1:
                 subfield = binary[j:j+8]
-                subfield_list[i] = int(subfield,2)*0.1
+                subfield_list[i] = int(subfield, 2)*0.1
                 j+=8
-            i +=1
-
+            i+=1
 
         return subfield_list
