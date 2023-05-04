@@ -1,11 +1,11 @@
 # Data Ages - I021/295
 # Compound length
-subfield_list = []
 from ClassLibrary.utils import *
 
 class I021_295():
 
     def __init__(self, parent):
+        self.subfield_list = []
         self.parent = parent
         self.parent.ref_no = 'I021/295'
         self.parent.long = self.set_long()
@@ -16,6 +16,7 @@ class I021_295():
     
 
     def set_long(self):
+        #self.subfield_list = []
         primary_long = 0
         for decimal in self.parent.data_list[0:4]:
             primary_long = primary_long + 1
@@ -29,11 +30,11 @@ class I021_295():
             if binary[i] == '1':
                 if (i+1) % 8 != 0:
                     long += 1
-                    subfield_list.append(1)
+                    self.subfield_list.append(1)
             else:
                 if (i+1) % 8 != 0:
                     long += 1
-                    subfield_list.append(-1)
+                    self.subfield_list.append(-1)
             i += 1
         return long
     
@@ -50,11 +51,11 @@ class I021_295():
 
         i = 0
         j = 0
-        while i < len(subfield_list):
-            if subfield_list[i] == 1:
+        while i < len(self.subfield_list):
+            if self.subfield_list[i] == 1:
                 subfield = binary[j:j+8]
-                subfield_list[i] = int(subfield, 2)*0.1
+                self.subfield_list[i] = int(subfield, 2)*0.1
                 j+=8
             i+=1
 
-        return subfield_list
+        return self.subfield_list
