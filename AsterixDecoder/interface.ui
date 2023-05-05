@@ -15,13 +15,13 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
+    <item alignment="Qt::AlignLeft">
      <widget class="QWidget" name="leftMenuContainer" native="true">
       <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
+       <item alignment="Qt::AlignLeft">
         <widget class="QWidget" name="leftMenuSubcontainer" native="true">
          <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item alignment="Qt::AlignLeft">
+          <item alignment="Qt::AlignTop">
            <widget class="QFrame" name="frame">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
@@ -53,10 +53,10 @@
             </layout>
            </widget>
           </item>
-          <item>
+          <item alignment="Qt::AlignTop">
            <widget class="QFrame" name="frame_2">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -130,6 +130,19 @@
              </item>
             </layout>
            </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item alignment="Qt::AlignBottom">
            <widget class="QFrame" name="frame_3">
