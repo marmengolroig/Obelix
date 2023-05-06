@@ -26,7 +26,6 @@ class I021_090():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
         binary=decimal_to_bin_str(self.data[0])
         NUCr_NACv = int(binary[0:3],2)
         NUCpNIC = int(binary[3:7],2)

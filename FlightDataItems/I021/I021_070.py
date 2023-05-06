@@ -21,7 +21,6 @@ class I021_070():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
         binary=concatenate_decimals_in_binary(self.data)
         decimal = int(binary[4:16],2)
         octal = decimal_to_four_digit_octal(decimal)

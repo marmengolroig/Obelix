@@ -21,7 +21,6 @@ class I010_140():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
         print(concatenate_decimals_in_binary(self.data))
         return sec_to_hourminsec(int(concatenate_decimals_in_binary(self.data),2)/128)
     

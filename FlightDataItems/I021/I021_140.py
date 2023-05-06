@@ -21,7 +21,6 @@ class I021_140():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
         binary = concatenate_decimals_in_binary(self.data)
         height = int(binary,2)*6.25
         

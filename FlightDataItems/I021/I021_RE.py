@@ -25,5 +25,8 @@ class I021_RE():
     def set_data(self):
         return self.parent.data_list[0:self.parent.long]
     
+    def get_data(self):
+        return self.data
+    
     def decode_data(self):
         return 'Reserved Expansion Field'

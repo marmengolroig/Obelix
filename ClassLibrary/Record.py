@@ -62,13 +62,13 @@ class Record:
         self.fspec = remove_char_in_positions(self.fspec,8) # remove FX, every 8th char
         indexes = find_indexes_of_wanted_bit(self.fspec,'1') # find indexes of 1s
         starting_octet = 0
-        # sum = 0
+        sum = 0
         for i,value in enumerate(self.fspec):
             if i in indexes:
                 dataitem = DataItemCat21(i+1, self.datafield_list[starting_octet:]) # create dataitem
                 self.dataitems_list.append(dataitem)
                 starting_octet = starting_octet + dataitem.retrieve_long()
-                # sum +=1
-                # if sum == 27:
-                #     break
+                sum +=1
+                if sum == self.fspec.count('1'):
+                    break
         return self.dataitems_list

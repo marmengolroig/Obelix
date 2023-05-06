@@ -18,8 +18,8 @@ def main():
     
 
     print("Data blocks: "+str(file.retrieve_num_datablocks()))
-    m = 0
-    while m<3:   # datablocks in a file
+    m = 139746
+    while m<139747:   # datablocks in a file
         print('-------------------------------')
         print(f'Datablock ID: {m+1}')
         print(file.datablock_list[m].record)
@@ -29,11 +29,15 @@ def main():
         print(f'Record #DataItems: {file.datablock_list[m].record.retrieve_num_ones_fspec()}')
         print(f'Record #DataFields: {file.datablock_list[m].record.retrieve_num_datafields()}')
         n = 0
-        dataitems_list = file.datablock_list[m].decode_record()
+        dataitems_list = file.datablock_list[m].record.dataitems_list
         while n<len(dataitems_list): # dataitems in a datablock
             print('---')
+            print(f'Dataitems list LENGTH: {len(dataitems_list)}')
             print(f'Dataitem FRN: {dataitems_list[n].FRN}')
-            print(f'Dataitem Data: {dataitems_list[n].dataitem.data}')
+            if dataitems_list[n].FRN==48:
+                print(f'Dataitem Data: {dataitems_list[n].dataitem.get_data()}')
+            else:
+                print(f'Dataitem Data: {dataitems_list[n].dataitem.data}')
             print(f'Dataitem Decoded: {dataitems_list[n].dataitem.decode_data()}')
             n=n+1
         m=m+1

@@ -21,7 +21,6 @@ class I021_210():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
         binary=decimal_to_bin_str(self.data[0])
         VNS = binary[1]
         if VNS == '0':
@@ -35,7 +34,7 @@ class I021_210():
         elif VN == '001':
             VN = 'DO-260A [Ref. 9]'
         elif VN == '010':
-            VN = 'ED120A/DO-260B [Ref. 11]'
+            VN = 'ED102A/DO-260B [Ref. 11]'
         
         LTT = binary[5:8]
         if LTT == '000':

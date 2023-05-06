@@ -28,8 +28,6 @@ class I010_170():
     
     def decode_data(self):
         bin_str = decimal_to_bin_str(self.data[0])
-        print(self.data)
-        print(bin_str)
         CNF = bin_str[0]
         if CNF == '0':
             CNF = 'Confirmed track'

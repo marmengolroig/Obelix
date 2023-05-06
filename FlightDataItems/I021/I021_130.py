@@ -21,7 +21,6 @@ class I021_130():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
         latitude_WGS84 = read_in_twos_complement(concatenate_decimals_in_binary(self.data[0:3]))*180/8388608
         longitude_WGS84 = read_in_twos_complement(concatenate_decimals_in_binary(self.data[3:6]))*180/8388608
         return (latitude_WGS84, longitude_WGS84)

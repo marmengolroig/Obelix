@@ -21,7 +21,6 @@ class I021_071():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
         binary = concatenate_decimals_in_binary(self.data)
         time = int(binary,2)/128
         
