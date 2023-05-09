@@ -13,16 +13,91 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">* {
+	border: none;
+	background-color: transparent;
+	background: none;
+	padding: 0;
+	margin: 0;
+	color: #fff;
+}
+
+#centralwidget {
+	background-color: #1f232a;
+}
+#leftMenuSubcontainer {
+	background-color: #16191d;
+}
+
+#leftMenuSubcontainer QPushButton { 
+	text-align: left; 
+	padding: 5px 10px;
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+}
+
+
+</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="spacing">
+     <number>100</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item alignment="Qt::AlignLeft">
      <widget class="QWidget" name="leftMenuContainer" native="true">
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item alignment="Qt::AlignLeft">
         <widget class="QWidget" name="leftMenuSubcontainer" native="true">
          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item alignment="Qt::AlignTop">
            <widget class="QFrame" name="frame">
+            <property name="styleSheet">
+             <string notr="true">color: #fff</string>
+            </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -30,10 +105,29 @@
              <enum>QFrame::Raised</enum>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
              <item>
               <widget class="QPushButton" name="menuBtn">
                <property name="toolTip">
                 <string>Menu</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: #fff;
+</string>
                </property>
                <property name="text">
                 <string/>
@@ -68,10 +162,29 @@
              <enum>QFrame::Raised</enum>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_3">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>10</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>10</number>
+             </property>
              <item>
-              <widget class="QPushButton" name="pushButton_2">
+              <widget class="QPushButton" name="homeBtn">
                <property name="toolTip">
                 <string>Home</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: #1f232a;
+color: #fff;</string>
                </property>
                <property name="text">
                 <string>Home</string>
@@ -89,7 +202,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_3">
+              <widget class="QPushButton" name="mapBtn">
                <property name="toolTip">
                 <string>Map View</string>
                </property>
@@ -109,7 +222,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_4">
+              <widget class="QPushButton" name="reportBtn">
                <property name="toolTip">
                 <string>View Reports</string>
                </property>
@@ -153,8 +266,23 @@
              <enum>QFrame::Raised</enum>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>10</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>10</number>
+             </property>
              <item>
-              <widget class="QPushButton" name="pushButton_5">
+              <widget class="QPushButton" name="settingsBtn">
                <property name="toolTip">
                 <string>Go to settings</string>
                </property>
@@ -174,7 +302,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_6">
+              <widget class="QPushButton" name="infoBtn">
                <property name="toolTip">
                 <string>Information about the app</string>
                </property>
@@ -194,7 +322,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_7">
+              <widget class="QPushButton" name="helpBtn">
                <property name="toolTip">
                 <string>Get more help</string>
                </property>
@@ -223,7 +351,59 @@
      </widget>
     </item>
     <item>
-     <widget class="QWidget" name="mainBodyContainer" native="true"/>
+     <widget class="QWidget" name="centerMenuContainer" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item alignment="Qt::AlignTop">
+        <widget class="QFrame" name="frame_4">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>More Menu</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>PushButton</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="frame_5">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="mainBodyContainer" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(143, 89, 2);</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
