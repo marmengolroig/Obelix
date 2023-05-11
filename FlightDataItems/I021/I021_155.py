@@ -1,29 +1,33 @@
-# Calculated Track Velocity in Cartesian Co-ordinates - I010/202
-# Fixed length: 4 octets
+# Barometric Vertical Rate - I021/155
+# Fixed length: 2 octets
 
 from ClassLibrary.utils import *
 
-class I010_202():
+class I021_155():
 
     def __init__(self, parent):
         self.parent = parent
-        self.parent.ref_no = 'I010/202'
+        self.parent.ref_no = 'I021/155'
         self.parent.long = self.set_long()
         self.parent.length_type = 0 # 0: fixed, 1: extended, 2: repetitive, 3: compound
         self.parent.dataitem = self
         self.data = self.set_data()
         self.decoded_data = self.decode_data()
 
-
     def set_long(self):
-        return 4
+        return 2
     
     def set_data(self):
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        vx = decimal_to_bin_str(self.data[0])+decimal_to_bin_str(self.data[1])
-        vx = read_in_twos_complement(vx)*0.25  # m/s
-        vy = decimal_to_bin_str(self.data[2])+decimal_to_bin_str(self.data[3])
-        vy = read_in_twos_complement(vy)*0.25  # m/s
-        return (vx,vy)
+        binary=concatenate_decimals_in_binary(self.data)
+        RE = binary[0]
+        if RE == '0':
+            RE = 'Value in defined range'
+        elif RE == '1':
+            RE = 'Value exceeds defined range'
+
+        BVR = read_in_twos_complement(binary[1:16])*6.25  #ft/min
+        
+        return (RE,BVR)

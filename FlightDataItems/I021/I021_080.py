@@ -1,13 +1,13 @@
-# Target Address - I010/220
-# Fixed length: 2 octets
+# Target Adress - I021/080
+# Fixed length: 3 octets
 
 from ClassLibrary.utils import *
 
-class I010_220():
+class I021_080():
 
     def __init__(self, parent):
         self.parent = parent
-        self.parent.ref_no = 'I010/220'
+        self.parent.ref_no = 'I021/080'
         self.parent.long = self.set_long()
         self.parent.length_type = 0 # 0: fixed, 1: extended, 2: repetitive, 3: compound
         self.parent.dataitem = self
@@ -29,4 +29,3 @@ class I010_220():
         ch5 = four_bit_to_char(binary[16:20])
         ch6 = four_bit_to_char(binary[20:24])
         return ch1+ch2+ch3+ch4+ch5+ch6
-    

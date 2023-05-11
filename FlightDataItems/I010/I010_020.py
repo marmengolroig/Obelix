@@ -27,7 +27,7 @@ class I010_020():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
+        
         bin_str = decimal_to_bin_str(self.data[0])
         TYP = bin_str[0:3]
         if TYP == '000':
@@ -92,7 +92,7 @@ class I010_020():
             elif RAB == '1':
                 RAB = 'Report from field monitor (fixed transponder)'
 
-            LOP = bin_str[3]
+            LOP = bin_str[3:5]
             if LOP == '00':
                 LOP = 'Undetermined'
             elif LOP == '01':
@@ -100,7 +100,7 @@ class I010_020():
             elif LOP == '10':
                 LOP = 'Loop end'
 
-            TOT = bin_str[4:8]
+            TOT = bin_str[5:7]
             if TOT == '00':
                 TOT = 'Undetermined'
             elif TOT == '01':

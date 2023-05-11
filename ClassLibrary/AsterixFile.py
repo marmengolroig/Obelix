@@ -57,6 +57,6 @@ class AsterixFile:
         for datablock in self.datablock_list:
             datablock.record.divide_record()
     def decode_dataitems(self):
-        self.datablock_list[0].decode_record()
-    #    for datablock in self.datablock_list:
-    #        datablock.record.decode_dataitems()
+    #   self.datablock_list[0].decode_record()
+        for datablock in self.datablock_list:
+            datablock.decode_record()
