@@ -1,4 +1,7 @@
 <RCC>
+  <qresource prefix="images">
+    <file>logo.png</file>
+  </qresource>
   <qresource prefix="icons">
     <file>icons/activity.svg</file>
     <file>icons/airplay.svg</file>
@@ -234,7 +237,6 @@
     <file>icons/sun.svg</file>
     <file>icons/sunrise.svg</file>
     <file>icons/sunset.svg</file>
-    <file>icons/table.svg</file>
     <file>icons/tablet.svg</file>
     <file>icons/tag.svg</file>
     <file>icons/target.svg</file>
@@ -287,8 +289,5 @@
     <file>icons/zap-off.svg</file>
     <file>icons/zoom-in.svg</file>
     <file>icons/zoom-out.svg</file>
-  </qresource>
-  <qresource prefix="images">
-    <file>logo.png</file>
   </qresource>
 </RCC>
