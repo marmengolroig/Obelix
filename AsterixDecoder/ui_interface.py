@@ -448,7 +448,7 @@ class Ui_MainWindow(object):
 
         self.table.setHorizontalHeaderLabels(["Category", "SAC", "SIC"])
         m=0
-        while m<len(file.datablock_list):
+        while m<2:
                 self.table.setItem(m, 0, QTableWidgetItem(f'{file.datablock_list[m].cat}'))
                 dataitems_list = file.datablock_list[m].record.dataitems_list
                 n=0
