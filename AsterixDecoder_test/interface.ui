@@ -452,9 +452,9 @@ color: #fff;</string>
            </widget>
           </item>
           <item>
-           <widget class="QStackedWidget" name="stackedWidget">
+           <widget class="QCustomStackedWidget" name="centerMenuPages">
             <property name="currentIndex">
-             <number>2</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="page">
              <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -786,7 +786,7 @@ color: #fff;</string>
            <widget class="QWidget" name="mainContentsContainer" native="true">
             <layout class="QVBoxLayout" name="verticalLayout_15">
              <item>
-              <widget class="QStackedWidget" name="stackedWidget_3">
+              <widget class="QCustomStackedWidget" name="mainPages">
                <property name="currentIndex">
                 <number>2</number>
                </property>
@@ -943,9 +943,9 @@ color: #fff;</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QStackedWidget" name="stackedWidget_2">
+                 <widget class="QCustomStackedWidget" name="rightMenuPages">
                   <property name="currentIndex">
-                   <number>1</number>
+                   <number>0</number>
                   </property>
                   <widget class="QWidget" name="page_4">
                    <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -1041,7 +1041,7 @@ color: #fff;</string>
                  </widget>
                 </item>
                 <item alignment="Qt::AlignRight">
-                 <widget class="QPushButton" name="pushButton_8">
+                 <widget class="QPushButton" name="closeNotificationBtn">
                   <property name="toolTip">
                    <string>Close notification</string>
                   </property>
@@ -1141,6 +1141,12 @@ color: #fff;</string>
   <customwidget>
    <class>QCustomSlideMenu</class>
    <extends>QWidget</extends>
+   <header location="global">Custom_Widgets.Widgets.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QCustomStackedWidget</class>
+   <extends>QStackedWidget</extends>
    <header location="global">Custom_Widgets.Widgets.h</header>
    <container>1</container>
   </customwidget>

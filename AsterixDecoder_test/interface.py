@@ -1,20 +1,16 @@
-# -*- coding: utf-8 -*-
-
-################################################################################
-## Form generated from reading UI file 'interface.ui'
-##
-## Created by: Qt User Interface Compiler version 5.15.2
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
+import sys
+sys.path.append("..")
 
 from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
 from Custom_Widgets.Widgets import QCustomSlideMenu
+from Custom_Widgets.Widgets import QCustomStackedWidget
 
 import resources_rc
+
+from decoder import decoder
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -229,8 +225,8 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_6.addWidget(self.frame_4, 0, Qt.AlignTop)
 
-        self.stackedWidget = QStackedWidget(self.centerMenuSubContainer)
-        self.stackedWidget.setObjectName(u"stackedWidget")
+        self.centerMenuPages = QCustomStackedWidget(self.centerMenuSubContainer)
+        self.centerMenuPages.setObjectName(u"centerMenuPages")
         self.page = QWidget()
         self.page.setObjectName(u"page")
         self.verticalLayout_7 = QVBoxLayout(self.page)
@@ -244,7 +240,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_7.addWidget(self.label_2)
 
-        self.stackedWidget.addWidget(self.page)
+        self.centerMenuPages.addWidget(self.page)
         self.page_2 = QWidget()
         self.page_2.setObjectName(u"page_2")
         self.verticalLayout_8 = QVBoxLayout(self.page_2)
@@ -256,7 +252,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_8.addWidget(self.label_3)
 
-        self.stackedWidget.addWidget(self.page_2)
+        self.centerMenuPages.addWidget(self.page_2)
         self.page_3 = QWidget()
         self.page_3.setObjectName(u"page_3")
         self.verticalLayout_9 = QVBoxLayout(self.page_3)
@@ -268,9 +264,9 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_9.addWidget(self.label_4)
 
-        self.stackedWidget.addWidget(self.page_3)
+        self.centerMenuPages.addWidget(self.page_3)
 
-        self.verticalLayout_6.addWidget(self.stackedWidget)
+        self.verticalLayout_6.addWidget(self.centerMenuPages)
 
 
         self.verticalLayout_5.addWidget(self.centerMenuSubContainer, 0, Qt.AlignLeft)
@@ -415,8 +411,8 @@ class Ui_MainWindow(object):
         self.mainContentsContainer.setObjectName(u"mainContentsContainer")
         self.verticalLayout_15 = QVBoxLayout(self.mainContentsContainer)
         self.verticalLayout_15.setObjectName(u"verticalLayout_15")
-        self.stackedWidget_3 = QStackedWidget(self.mainContentsContainer)
-        self.stackedWidget_3.setObjectName(u"stackedWidget_3")
+        self.mainPages = QCustomStackedWidget(self.mainContentsContainer)
+        self.mainPages.setObjectName(u"mainPages")
         self.page_6 = QWidget()
         self.page_6.setObjectName(u"page_6")
         self.verticalLayout_16 = QVBoxLayout(self.page_6)
@@ -428,7 +424,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_16.addWidget(self.label_10)
 
-        self.stackedWidget_3.addWidget(self.page_6)
+        self.mainPages.addWidget(self.page_6)
         self.page_7 = QWidget()
         self.page_7.setObjectName(u"page_7")
         self.verticalLayout_17 = QVBoxLayout(self.page_7)
@@ -440,21 +436,69 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_17.addWidget(self.label_11)
 
-        self.stackedWidget_3.addWidget(self.page_7)
+        self.mainPages.addWidget(self.page_7)
         self.page_8 = QWidget()
         self.page_8.setObjectName(u"page_8")
         self.verticalLayout_18 = QVBoxLayout(self.page_8)
         self.verticalLayout_18.setObjectName(u"verticalLayout_18")
+
+### AQUI COMENÇA EL NOSTRE CODI
+        self.layout = QGridLayout()
+        self.layout.setObjectName(u"layout")
         self.label_12 = QLabel(self.page_8)
         self.label_12.setObjectName(u"label_12")
         self.label_12.setFont(font)
         self.label_12.setAlignment(Qt.AlignCenter)
+        self.layout.addWidget(self.label_12, 0, 0, 1, 1)
+        self.verticalLayout_18.addLayout(self.layout)
+        self.table = QTableWidget(self.page_8)
 
-        self.verticalLayout_18.addWidget(self.label_12)
+        file = decoder() 
 
-        self.stackedWidget_3.addWidget(self.page_8)
+        self.table.setObjectName(u"table")
+        self.table.setColumnCount(3)
+        self.table.setRowCount(file.retrieve_num_datablocks())
 
-        self.verticalLayout_15.addWidget(self.stackedWidget_3)
+        self.table.setHorizontalHeaderLabels(["Category", "SAC", "SIC"])
+        m=0
+        while m<2:
+                self.table.setItem(m, 0, QTableWidgetItem(f'{file.datablock_list[m].cat}'))
+                dataitems_list = file.datablock_list[m].record.dataitems_list
+                n=0
+                while n<1:
+                     self.table.setItem(m, 1, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()[0]}'))
+                     self.table.setItem(m, 2, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()[1]}'))
+                     n = n+1   
+                m=m+1
+        
+
+        
+
+        self.table.horizontalHeader().setVisible(True)
+        self.table.horizontalHeader().setCascadingSectionResizes(False)
+        self.table.horizontalHeader().setDefaultSectionSize(100)
+        self.table.horizontalHeader().setHighlightSections(True)
+        self.table.horizontalHeader().setMinimumSectionSize(50)
+        self.table.horizontalHeader().setSortIndicatorShown(False)
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.verticalHeader().setVisible(True)
+        self.table.verticalHeader().setHighlightSections(True)
+        self.table.verticalHeader().setMinimumSectionSize(50)
+        self.table.verticalHeader().setSortIndicatorShown(False)
+        self.table.verticalHeader().setStretchLastSection(False)
+        self.verticalLayout_18.addWidget(self.table)
+### AQUI ACABA EL NOSTRE CODI
+
+        # self.label_12 = QLabel(self.page_8)
+        # self.label_12.setObjectName(u"label_12")
+        # self.label_12.setFont(font)
+        # self.label_12.setAlignment(Qt.AlignCenter)
+
+        # self.verticalLayout_18.addWidget(self.label_12)
+
+        self.mainPages.addWidget(self.page_8)
+
+        self.verticalLayout_15.addWidget(self.mainPages)
 
 
         self.horizontalLayout_8.addWidget(self.mainContentsContainer)
@@ -495,8 +539,8 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_12.addWidget(self.frame_8)
 
-        self.stackedWidget_2 = QStackedWidget(self.rightMenuSubContainer)
-        self.stackedWidget_2.setObjectName(u"stackedWidget_2")
+        self.rightMenuPages = QCustomStackedWidget(self.rightMenuSubContainer)
+        self.rightMenuPages.setObjectName(u"rightMenuPages")
         self.page_4 = QWidget()
         self.page_4.setObjectName(u"page_4")
         self.verticalLayout_13 = QVBoxLayout(self.page_4)
@@ -508,7 +552,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_13.addWidget(self.label_8)
 
-        self.stackedWidget_2.addWidget(self.page_4)
+        self.rightMenuPages.addWidget(self.page_4)
         self.page_5 = QWidget()
         self.page_5.setObjectName(u"page_5")
         self.verticalLayout_14 = QVBoxLayout(self.page_5)
@@ -520,9 +564,9 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_14.addWidget(self.label_9)
 
-        self.stackedWidget_2.addWidget(self.page_5)
+        self.rightMenuPages.addWidget(self.page_5)
 
-        self.verticalLayout_12.addWidget(self.stackedWidget_2)
+        self.verticalLayout_12.addWidget(self.rightMenuPages)
 
 
         self.verticalLayout_11.addWidget(self.rightMenuSubContainer)
@@ -564,12 +608,12 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_10.addWidget(self.label_13)
 
-        self.pushButton_8 = QPushButton(self.frame_9)
-        self.pushButton_8.setObjectName(u"pushButton_8")
-        self.pushButton_8.setIcon(icon7)
-        self.pushButton_8.setIconSize(QSize(24, 24))
+        self.closeNotificationBtn = QPushButton(self.frame_9)
+        self.closeNotificationBtn.setObjectName(u"closeNotificationBtn")
+        self.closeNotificationBtn.setIcon(icon7)
+        self.closeNotificationBtn.setIconSize(QSize(24, 24))
 
-        self.horizontalLayout_10.addWidget(self.pushButton_8, 0, Qt.AlignRight)
+        self.horizontalLayout_10.addWidget(self.closeNotificationBtn, 0, Qt.AlignRight)
 
 
         self.verticalLayout_20.addWidget(self.frame_9)
@@ -619,9 +663,9 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(2)
-        self.stackedWidget_3.setCurrentIndex(2)
-        self.stackedWidget_2.setCurrentIndex(1)
+        self.centerMenuPages.setCurrentIndex(0)
+        self.mainPages.setCurrentIndex(2)
+        self.rightMenuPages.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -701,9 +745,9 @@ class Ui_MainWindow(object):
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"Notification", None))
         self.label_13.setText(QCoreApplication.translate("MainWindow", u"Notification Message", None))
 #if QT_CONFIG(tooltip)
-        self.pushButton_8.setToolTip(QCoreApplication.translate("MainWindow", u"Close notification", None))
+        self.closeNotificationBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close notification", None))
 #endif // QT_CONFIG(tooltip)
-        self.pushButton_8.setText("")
+        self.closeNotificationBtn.setText("")
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"Copyright SkyLink Connections", None))
     # retranslateUi
 
