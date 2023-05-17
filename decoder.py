@@ -10,7 +10,7 @@ path = (
     'Ficheros_asterix/201002-lebl-080001_smr_mlat_adsb.ast') # mixed
 
 def decoder():
-    file = AsterixFile(path[1])
+    file = AsterixFile(path[4])
     file.read_file()
     file.divide_datablocks()
     file.divide_records()

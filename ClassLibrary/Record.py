@@ -56,7 +56,7 @@ class Record:
                 sum +=1
                 if sum == self.fspec.count('1'):
                     break
-        return self.dataitems_list
+        
     
     def decode_cat21(self):
         self.fspec = remove_char_in_positions(self.fspec,8) # remove FX, every 8th char
@@ -71,4 +71,4 @@ class Record:
                 sum +=1
                 if sum == self.fspec.count('1'):
                     break
-        return self.dataitems_list
+        

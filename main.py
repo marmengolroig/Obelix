@@ -18,8 +18,8 @@ def main():
     
 
     print("Data blocks: "+str(file.retrieve_num_datablocks()))
-    m = 0
-    while m<2:   # datablocks in a file
+    m = 47
+    while m<48:   # datablocks in a file
         print('-------------------------------')
         print(f'Datablock ID: {m+1}')
         print(file.datablock_list[m].record)

@@ -442,38 +442,232 @@ class Ui_MainWindow(object):
         self.verticalLayout_18 = QVBoxLayout(self.page_8)
         self.verticalLayout_18.setObjectName(u"verticalLayout_18")
 
+
 ### AQUI COMENÇA EL NOSTRE CODI
-        self.layout = QGridLayout()
-        self.layout.setObjectName(u"layout")
         self.label_12 = QLabel(self.page_8)
         self.label_12.setObjectName(u"label_12")
         self.label_12.setFont(font)
         self.label_12.setAlignment(Qt.AlignCenter)
-        self.layout.addWidget(self.label_12, 0, 0, 1, 1)
-        self.verticalLayout_18.addLayout(self.layout)
+        # ADD WIDGET
+        self.verticalLayout_18.addWidget(self.label_12)
+       
         self.table = QTableWidget(self.page_8)
+        self.table21 = QTableWidget(self.page_8)
+
+        self.table_title = QLabel(self.page_8)
+        self.table_title.setObjectName(u"table_title")
+        self.table_title.setFont(QFont("Arial", 13, QFont.Bold))
+        self.table_title.setAlignment(Qt.AlignLeft)
+        # ADD WIDGET
+        self.verticalLayout_18.addWidget(self.table_title)
+
 
         file = decoder() 
 
         self.table.setObjectName(u"table")
-        self.table.setColumnCount(3)
-        self.table.setRowCount(file.retrieve_num_datablocks())
+        self.table21.setObjectName(u"table21")
 
-        self.table.setHorizontalHeaderLabels(["Category", "SAC", "SIC"])
+        self.table.setColumnCount(27)
+        
+
+        self.table21.setColumnCount(30)
+        
+
+        self.table.setHorizontalHeaderLabels(["Category", 
+                                              "SAC", 
+                                              "SIC",
+                                              "Message Type", 
+                                              "Target Report Descriptor", 
+                                              "Time of Day", 
+                                              "Position in WGS-84 coordinates", 
+                                              "Position in polar coordinates", 
+                                              "Position in Cartesian coordinates", 
+                                              "Calculated Track Velocity in polar coordinates", 
+                                              "Calculated Track Velocity in Cartesian coordinates", 
+                                              "Track Number", 
+                                              "Track Status", 
+                                              "Mode-3/A Code in Octal Representation", 
+                                              "Target Address", 
+                                              "Target Identification", 
+                                              "Mode-S MB Data", 
+                                              "Vehicle Fleet Identification", 
+                                              "Flight Level in Binary Representation", 
+                                              "Measured Height", 
+                                              "Target Size & Orientation", 
+                                              "System Status", 
+                                              "Pre-programmed Message", 
+                                              "Standard Deviation of Position", 
+                                              "Presence", 
+                                              "Amplitude of Primary Plot", 
+                                              "Calculated Acceleration" ])
+
+        self.table21.setHorizontalHeaderLabels(["Category",
+                                                "SAC",
+                                                "SIC",
+                                                "Target Report Descriptor",
+                                                "Track Number",
+                                                "Service Identification",
+                                                "Time of Applicability for Position",
+                                                "Position in WGS-84 coordinates",
+                                                "Position in WGS-84 coordinates, high res",
+                                                "Time of Applicability for Velocity",
+                                                "Air Speed",
+                                                "True Air Speed",
+                                                "Target Address",
+                                                "Time of Message Reception for Position",
+                                                "Time of Message Reception for Position, high precision",
+                                                "Time of Message Reception for Velocity",
+                                                "Time of Message Reception for Velocity, high precision",
+                                                "Geometric Height",
+                                                "Quality Indicators",
+                                                "MOPS Version",
+                                                "Mode-3/A Code in Octal Representation",
+                                                "Roll Angle",
+                                                "Flight Level in Binary Representation",
+                                                "Magnetic Heading",
+                                                "Target Status",
+                                                "Barometric Vertical Rate",
+                                                "Geometric Vertical Rate",
+                                                "Airborne Ground Vector",
+                                                "Track Angle Rate",
+                                                "Time of Report Transmission for Position",])
         m=0
-        while m<2:
-                self.table.setItem(m, 0, QTableWidgetItem(f'{file.datablock_list[m].cat}'))
+        row = 1
+        row21 = 1
+        while m<len(file.datablock_list):
                 dataitems_list = file.datablock_list[m].record.dataitems_list
-                n=0
-                while n<1:
-                     self.table.setItem(m, 1, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()[0]}'))
-                     self.table.setItem(m, 2, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()[1]}'))
-                     n = n+1   
+                if file.datablock_list[m].cat == 10:
+                        self.table.setRowCount(row)
+                        row = row + 1
+                        n=0
+                        while n<len(dataitems_list):
+                                self.table.setItem(m, 0, QTableWidgetItem(f'{file.datablock_list[m].cat}')) # Category
+                                if dataitems_list[n].FRN == 1 and dataitems_list[n].dataitem != None: # SAC/SIC
+                                        self.table.setItem(m, 1, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()[0]}'))
+                                        self.table.setItem(m, 2, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()[1]}'))
+                                elif dataitems_list[n].FRN == 2 and dataitems_list[n].dataitem != None: # Message Type
+                                        self.table.setItem(m, 3, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 3 and dataitems_list[n].dataitem != None: # Target Report Descriptor
+                                        self.table.setItem(m, 4, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 4 and dataitems_list[n].dataitem != None: # Time of Day
+                                       self.table.setItem(m, 5, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 5 and dataitems_list[n].dataitem != None: # Position in WGS-84 coordinates
+                                        self.table.setItem(m, 6, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 6 and dataitems_list[n].dataitem != None: # Position in polar coordinates
+                                        self.table.setItem(m, 7, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 7 and dataitems_list[n].dataitem != None: # Position in Cartesian coordinates
+                                        self.table.setItem(m, 8, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 8 and dataitems_list[n].dataitem != None: # Calculated Track Velocity in polar coordinates
+                                        self.table.setItem(m, 9, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 9 and dataitems_list[n].dataitem != None: # Calculated Track Velocity in Cartesian coordinates
+                                        self.table.setItem(m, 10, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 10 and dataitems_list[n].dataitem != None: # Track Number
+                                        self.table.setItem(m, 11, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 11 and dataitems_list[n].dataitem != None: # Track Status
+                                        self.table.setItem(m, 12, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 12 and dataitems_list[n].dataitem != None: # Mode-3/A Code in Octal Representation
+                                        self.table.setItem(m, 13, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 13 and dataitems_list[n].dataitem != None: # Target Address
+                                        self.table.setItem(m, 14, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 14 and dataitems_list[n].dataitem != None: # Target Identification
+                                        self.table.setItem(m, 15, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 15 and dataitems_list[n].dataitem != None: # Mode-S MB Data
+                                        self.table.setItem(m, 16, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 16 and dataitems_list[n].dataitem != None: # Vehicle Fleet Identification
+                                        self.table.setItem(m, 17, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 17 and dataitems_list[n].dataitem != None: # Flight Level in Binary Representation
+                                        self.table.setItem(m, 18, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 18 and dataitems_list[n].dataitem != None: # Measured Height
+                                        self.table.setItem(m, 19, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 19 and dataitems_list[n].dataitem != None: # Target Size & Orientation
+                                        self.table.setItem(m, 20, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 20 and dataitems_list[n].dataitem != None: # System Status
+                                        self.table.setItem(m, 21, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 21 and dataitems_list[n].dataitem != None: # Pre-programmed Message
+                                        self.table.setItem(m, 22, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 22 and dataitems_list[n].dataitem != None: # Standard Deviation of Position
+                                        self.table.setItem(m, 23, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 23 and dataitems_list[n].dataitem != None: # Presence
+                                        self.table.setItem(m, 24, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 24 and dataitems_list[n].dataitem != None: # Amplitude of Primary Plot
+                                        self.table.setItem(m, 25, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}'))
+                                elif dataitems_list[n].FRN == 25 and dataitems_list[n].dataitem != None: # Calculated Acceleration
+                                        self.table.setItem(m, 26, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()}')) 
+                                
+                                n=n+1
+                        
+                elif file.datablock_list[m].cat == 21:
+                        self.table21.setRowCount(row21)
+                        row21 = row21 + 1
+                        k=0
+                        while k<len(dataitems_list):
+                                self.table21.setItem(m, 0, QTableWidgetItem(f'{file.datablock_list[m].cat}')) # Category
+                                if dataitems_list[k].FRN == 1 and dataitems_list[k].dataitem != None: # SAC/SIC
+                                        self.table21.setItem(m, 1, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()[0]}'))
+                                        self.table21.setItem(m, 2, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()[1]}'))
+                                elif dataitems_list[k].FRN == 2 and dataitems_list[k].dataitem != None: # Target Report Descriptor
+                                        self.table21.setItem(m, 3, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 3 and dataitems_list[k].dataitem != None: # Track Number
+                                        self.table21.setItem(m, 4, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 4 and dataitems_list[k].dataitem != None: # Service Identificator
+                                        self.table21.setItem(m, 5, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 5 and dataitems_list[k].dataitem != None: # Time of Applicability for Position
+                                        self.table21.setItem(m, 6, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 6 and dataitems_list[k].dataitem != None: # Position in WGS-84 coordinates
+                                        self.table21.setItem(m, 7, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 7 and dataitems_list[k].dataitem != None: # Position in WGS-84, high res.
+                                        self.table21.setItem(m, 8, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 8 and dataitems_list[k].dataitem != None: # Time of Applicability for Velocity
+                                        self.table21.setItem(m, 9, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 9 and dataitems_list[k].dataitem != None: # Airspeed
+                                        self.table21.setItem(m, 10, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 10 and dataitems_list[k].dataitem != None: # True Airspeed
+                                        self.table21.setItem(m, 11, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 11 and dataitems_list[k].dataitem != None: # Target Address
+                                        self.table21.setItem(m, 12, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 12 and dataitems_list[k].dataitem != None: # Time of Message Reception for Position
+                                        self.table21.setItem(m, 13, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 13 and dataitems_list[k].dataitem != None: # Time of Message Reception for Position, high precision
+                                        self.table21.setItem(m, 14, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 14 and dataitems_list[k].dataitem != None: # Time of Message Reception for Velocity
+                                        self.table21.setItem(m, 15, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 15 and dataitems_list[k].dataitem != None: # Time of Message Reception for Velocity, high precision
+                                        self.table21.setItem(m, 16, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 16 and dataitems_list[k].dataitem != None: # Geometric Height
+                                        self.table21.setItem(m, 17, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 17 and dataitems_list[k].dataitem != None: # Quality Indicators
+                                        self.table21.setItem(m, 18, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 18 and dataitems_list[k].dataitem != None: # MOPS Version
+                                        self.table21.setItem(m, 19, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 19 and dataitems_list[k].dataitem != None: # Mode-3/A Code in Octal Representation
+                                        self.table21.setItem(m, 20, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 20 and dataitems_list[k].dataitem != None: # Roll Angle
+                                        self.table21.setItem(m, 21, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 21 and dataitems_list[k].dataitem != None: # Flight Level in Binary Representation
+                                        self.table21.setItem(m, 22, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 22 and dataitems_list[k].dataitem != None: # Magnetic Heading
+                                        self.table21.setItem(m, 23, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 23 and dataitems_list[k].dataitem != None: # Target Status
+                                        self.table21.setItem(m, 24, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 24 and dataitems_list[k].dataitem != None: # Barometric Vertical Rate
+                                        self.table21.setItem(m, 25, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 25 and dataitems_list[k].dataitem != None: # Geometric Vertical Rate
+                                        self.table21.setItem(m, 26, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 26 and dataitems_list[k].dataitem != None: # Airborne Ground Vector
+                                        self.table21.setItem(m, 27, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 27 and dataitems_list[k].dataitem != None: # Track Angle Rate
+                                        self.table21.setItem(m, 28, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                elif dataitems_list[k].FRN == 28 and dataitems_list[k].dataitem != None: # Time of Report Transmission for Position
+                                        self.table21.setItem(m, 29, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()}'))
+                                k=k+1
+                else:
+                        row21 = row21 + 1
+                                
                 m=m+1
-        
+       
 
         
-
+        self.table.setShowGrid(True)
         self.table.horizontalHeader().setVisible(True)
         self.table.horizontalHeader().setCascadingSectionResizes(False)
         self.table.horizontalHeader().setDefaultSectionSize(100)
@@ -481,24 +675,70 @@ class Ui_MainWindow(object):
         self.table.horizontalHeader().setMinimumSectionSize(50)
         self.table.horizontalHeader().setSortIndicatorShown(False)
         self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.resizeColumnsToContents()
         self.table.verticalHeader().setVisible(True)
         self.table.verticalHeader().setHighlightSections(True)
         self.table.verticalHeader().setMinimumSectionSize(50)
         self.table.verticalHeader().setSortIndicatorShown(False)
         self.table.verticalHeader().setStretchLastSection(False)
+        if self.table.rowCount() > 0:
+                self.table_title.setVisible(True)
+                self.table.setVisible(True)
+        else:
+                self.table_title.setVisible(False)
+                self.table.setVisible(False)
+        for row in range(self.table.rowCount()):
+                for col in range(self.table.columnCount()):
+                        item = self.table.item(row, col)
+                        if item is None:
+                                new_item = QTableWidgetItem("No Data Available")
+                                self.table.setItem(row, col, new_item)
         self.verticalLayout_18.addWidget(self.table)
+
+        self.table_title21 = QLabel(self.page_8)
+        self.table_title21.setObjectName(u"table_title21")
+        self.table_title21.setFont(QFont("Arial", 13, QFont.Bold))
+        self.table_title21.setAlignment(Qt.AlignLeft)
+        self.verticalLayout_18.addWidget(self.table_title21)
+
+        self.table21.setShowGrid(True)
+        self.table21.horizontalHeader().setVisible(True)
+        self.table21.horizontalHeader().setCascadingSectionResizes(False)
+        self.table21.horizontalHeader().setDefaultSectionSize(100)
+        self.table21.horizontalHeader().setHighlightSections(True)
+        self.table21.horizontalHeader().setMinimumSectionSize(50)
+        self.table21.horizontalHeader().setSortIndicatorShown(False)
+        self.table21.horizontalHeader().setStretchLastSection(True)
+        self.table21.resizeColumnsToContents()
+        self.table21.verticalHeader().setVisible(True)
+        self.table21.verticalHeader().setHighlightSections(True)
+        self.table21.verticalHeader().setMinimumSectionSize(50)
+        self.table21.verticalHeader().setSortIndicatorShown(False)
+        self.table21.verticalHeader().setStretchLastSection(False)
+       
+        if self.table21.rowCount() > 0:
+                self.table_title21.setVisible(True)
+                self.table21.setVisible(True)
+
+        else:
+                self.table_title21.setVisible(False)
+                self.table21.setVisible(False)
+        for row in range(self.table21.rowCount()):
+                for col in range(self.table21.columnCount()):
+                        item = self.table21.item(row, col)
+                        if item is None:
+                                new_item = QTableWidgetItem("No Data Available")
+                                self.table21.setItem(row, col, new_item)
+
+        self.verticalLayout_18.addWidget(self.table21)
+
 ### AQUI ACABA EL NOSTRE CODI
 
-        # self.label_12 = QLabel(self.page_8)
-        # self.label_12.setObjectName(u"label_12")
-        # self.label_12.setFont(font)
-        # self.label_12.setAlignment(Qt.AlignCenter)
-
-        # self.verticalLayout_18.addWidget(self.label_12)
-
         self.mainPages.addWidget(self.page_8)
+        self.mainPages.setCurrentIndex(0)
 
         self.verticalLayout_15.addWidget(self.mainPages)
+
 
 
         self.horizontalLayout_8.addWidget(self.mainContentsContainer)
@@ -735,6 +975,8 @@ class Ui_MainWindow(object):
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"Home", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"Map View", None))
         self.label_12.setText(QCoreApplication.translate("MainWindow", u"Reports", None))
+        self.table_title21.setText(QCoreApplication.translate("MainWindow", u"CAT 21", None))
+        self.table_title.setText(QCoreApplication.translate("MainWindow", u"CAT 10", None))
         self.label_7.setText(QCoreApplication.translate("MainWindow", u"Right Menu", None))
 #if QT_CONFIG(tooltip)
         self.closeRightMenuBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close Menu", None))
