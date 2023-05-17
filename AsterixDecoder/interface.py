@@ -1,9 +1,13 @@
 import sys
 sys.path.append("..")
+import geopandas as gpd
+import os
+import folium
 
 from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
+from PySide2.QtWebEngineWidgets import QWebEngineView
 
 from Custom_Widgets.Widgets import QCustomSlideMenu
 from Custom_Widgets.Widgets import QCustomStackedWidget
@@ -11,6 +15,7 @@ from Custom_Widgets.Widgets import QCustomStackedWidget
 import resources_rc
 
 from decoder import decoder
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -429,12 +434,42 @@ class Ui_MainWindow(object):
         self.page_7.setObjectName(u"page_7")
         self.verticalLayout_17 = QVBoxLayout(self.page_7)
         self.verticalLayout_17.setObjectName(u"verticalLayout_17")
+
+        ##### AQUI COMENÇA EL NOSTRE CODI de mapes
         self.label_11 = QLabel(self.page_7)
         self.label_11.setObjectName(u"label_11")
         self.label_11.setFont(font)
         self.label_11.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout_17.addWidget(self.label_11)
+        # Get the absolute path to the HTML file
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        html_path = os.path.join(script_dir, "map.html")
+
+        # Specify the path to the shapefile (.shp) file
+        shapefile_path = '/home/judit/projects/Obelix/AsterixDecoder/airports/ne_10m_airports.shp'
+
+        # Read the shapefile using geopandas
+        airports = gpd.read_file(shapefile_path)
+
+        # Barcelona Airport
+        bcn_airport = airports[airports['iata_code'] == 'BCN']
+        bcn_airport_lat = bcn_airport['geometry'].y.iloc[0]
+        bcn_airport_lon = bcn_airport['geometry'].x.iloc[0]
+
+        # Create a Folium map
+        m = folium.Map(location=[bcn_airport_lat, bcn_airport_lon], zoom_start=12.5)
+
+        # Save the Folium map as an HTML file
+        m.save(html_path)
+
+        # Create a QWebEngineView widget
+        self.webview = QWebEngineView(self.page_7)
+        self.verticalLayout_17.addWidget(self.webview)
+
+        # Load the HTML file in the QWebEngineView widget
+        self.webview.load(QUrl.fromLocalFile(html_path))
+
+        #### AQUI COMENÇA EL NOSTRE CODI de mapes
 
         self.mainPages.addWidget(self.page_7)
         self.page_8 = QWidget()
@@ -666,56 +701,81 @@ class Ui_MainWindow(object):
                 m=m+1
        
 
+
+        # Create a custom header view to change the color of the corner widget
+
         
-        self.table.setShowGrid(True)
-        self.table.horizontalHeader().setVisible(True)
-        self.table.horizontalHeader().setCascadingSectionResizes(False)
-        self.table.horizontalHeader().setDefaultSectionSize(100)
-        self.table.horizontalHeader().setHighlightSections(True)
-        self.table.horizontalHeader().setMinimumSectionSize(50)
-        self.table.horizontalHeader().setSortIndicatorShown(False)
-        self.table.horizontalHeader().setStretchLastSection(True)
-        self.table.resizeColumnsToContents()
-        self.table.verticalHeader().setVisible(True)
-        self.table.verticalHeader().setHighlightSections(True)
-        self.table.verticalHeader().setMinimumSectionSize(50)
-        self.table.verticalHeader().setSortIndicatorShown(False)
-        self.table.verticalHeader().setStretchLastSection(False)
+        # CAT 10 TABLE
+        self.table.setShowGrid(True) # Show grid
+        self.table.setStyleSheet("QTableView { gridline-color: #343b47; }")
+        self.table.resizeColumnsToContents() # Resize columns to contents
+
+        self.table.horizontalHeader().setVisible(True) # Show horizontal header
+        self.table.horizontalHeader().setStyleSheet("QHeaderView::section { background-color: #16191d; color: #f0f0f0; border: 0.5px solid #16191d; }")
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Interactive)
+        self.table.horizontalHeader().setMinimumSectionSize(100) # Set minimum size
+        self.table.horizontalHeader().setHighlightSections(True) # Highlight sections
+        self.table.horizontalHeader().setSortIndicatorShown(True) # Show sort indicator
+        self.table.horizontalHeader().setStretchLastSection(True) # Stretch last section
+        
+
+        self.table.verticalHeader().setVisible(True) # Show vertical header
+        self.table.verticalHeader().setStyleSheet("QHeaderView::section { background-color: #16191d; color: #f0f0f0; border: 0.5px solid #16191d; }")
+        self.table.verticalHeader().setHighlightSections(True) # Highlight sections
+        self.table.verticalHeader().setMinimumSectionSize(50) # Set minimum size
+        self.table.verticalHeader().setSortIndicatorShown(False) # Show sort indicator
+        self.table.verticalHeader().setStretchLastSection(False) # Stretch last section
+        
+        # Show table
         if self.table.rowCount() > 0:
                 self.table_title.setVisible(True)
                 self.table.setVisible(True)
         else:
                 self.table_title.setVisible(False)
                 self.table.setVisible(False)
+
+        # Fill empty cells with "No Data Available"
         for row in range(self.table.rowCount()):
                 for col in range(self.table.columnCount()):
                         item = self.table.item(row, col)
                         if item is None:
-                                new_item = QTableWidgetItem("No Data Available")
+                                new_item = QTableWidgetItem("NO DATA AVAILABLE")
+                                new_item.setData(Qt.ForegroundRole, QColor(52, 59, 71))
                                 self.table.setItem(row, col, new_item)
+                        self.table.item(row,col).setTextAlignment(Qt.AlignCenter)
         self.verticalLayout_18.addWidget(self.table)
 
+        # CAT 21 TABLE
         self.table_title21 = QLabel(self.page_8)
         self.table_title21.setObjectName(u"table_title21")
         self.table_title21.setFont(QFont("Arial", 13, QFont.Bold))
         self.table_title21.setAlignment(Qt.AlignLeft)
         self.verticalLayout_18.addWidget(self.table_title21)
 
-        self.table21.setShowGrid(True)
-        self.table21.horizontalHeader().setVisible(True)
-        self.table21.horizontalHeader().setCascadingSectionResizes(False)
-        self.table21.horizontalHeader().setDefaultSectionSize(100)
-        self.table21.horizontalHeader().setHighlightSections(True)
-        self.table21.horizontalHeader().setMinimumSectionSize(50)
-        self.table21.horizontalHeader().setSortIndicatorShown(False)
-        self.table21.horizontalHeader().setStretchLastSection(True)
-        self.table21.resizeColumnsToContents()
-        self.table21.verticalHeader().setVisible(True)
-        self.table21.verticalHeader().setHighlightSections(True)
-        self.table21.verticalHeader().setMinimumSectionSize(50)
-        self.table21.verticalHeader().setSortIndicatorShown(False)
-        self.table21.verticalHeader().setStretchLastSection(False)
+        self.table21.setShowGrid(True) # Show grid
+        # Set the grid color
+        self.table21.setStyleSheet("QTableView { gridline-color: #343b47; }")
+        self.table21.resizeColumnsToContents() # Resize columns to contents
+
+        self.table21.horizontalHeader().setVisible(True) # Show horizontal header
+        self.table21.horizontalHeader().setStyleSheet("QHeaderView::section { background-color: #16191d; color: #f0f0f0; border: 0.5px solid #16191d; }")
+        self.table21.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.table21.horizontalHeader().setSectionResizeMode(0, QHeaderView.Interactive)
+        self.table21.horizontalHeader().setMinimumSectionSize(100) # Set minimum size
+        self.table21.horizontalHeader().setHighlightSections(True) # Highlight sections
+        self.table21.horizontalHeader().setSortIndicatorShown(True) # Show sort indicator
+        self.table21.horizontalHeader().setStretchLastSection(True) # Stretch last section
+        
+
+        self.table21.verticalHeader().setVisible(True) # Show vertical header
+        self.table21.verticalHeader().setStyleSheet("QHeaderView::section { background-color: #16191d; color: #f0f0f0; border: 0.5px solid #16191d; }")
+        self.table21.verticalHeader().setHighlightSections(True) # Highlight sections
+        self.table21.verticalHeader().setMinimumSectionSize(50) # Set minimum size
+        self.table21.verticalHeader().setSortIndicatorShown(False) # Show sort indicator
+        self.table21.verticalHeader().setStretchLastSection(False) # Stretch last section
        
+        # Show table
         if self.table21.rowCount() > 0:
                 self.table_title21.setVisible(True)
                 self.table21.setVisible(True)
@@ -723,12 +783,17 @@ class Ui_MainWindow(object):
         else:
                 self.table_title21.setVisible(False)
                 self.table21.setVisible(False)
+
+        # Fill empty cells with "No Data Available"
         for row in range(self.table21.rowCount()):
                 for col in range(self.table21.columnCount()):
                         item = self.table21.item(row, col)
                         if item is None:
-                                new_item = QTableWidgetItem("No Data Available")
+                                new_item = QTableWidgetItem("NO DATA AVAILABLE")
+                                new_item.setData(Qt.ForegroundRole, QColor(52, 59, 71))
                                 self.table21.setItem(row, col, new_item)
+                                self.table21.item(row,col).setTextAlignment(Qt.AlignCenter)
+                        
 
         self.verticalLayout_18.addWidget(self.table21)
 
