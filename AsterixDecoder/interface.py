@@ -433,7 +433,20 @@ class Ui_MainWindow(object):
                 self.openFileBtn.setFixedSize(QSize(200, 50))
                 self.openFileBtn.setObjectName(u"openFileBtn")
                 self.openFileBtn.setFont(font)
-                self.openFileBtn.setStyleSheet(u"background-color: #343b47;""color: #fff;")
+                self.openFileBtn.setStyleSheet(
+                                                        "QPushButton {"
+                                                        "   background-color: #343b47;"
+                                                        "   color: #fff;"
+                                                        "}"
+                                                        "QPushButton:hover {"
+                                                        "   background-color: #2c313c;"
+                                                        "   color: #fff;"
+                                                        "}"
+                                                        "QPushButton:pressed {"
+                                                        "   background-color: #16191d;"
+                                                        "   color: #fff;"
+                                                        "}"
+                                                )
                 self.openFileBtn.clicked.connect(self.open_file_dialog)
                 self.verticalLayout_16.addWidget(self.openFileBtn)
                 self.verticalLayout_16.setAlignment(self.openFileBtn, Qt.AlignCenter)
@@ -444,7 +457,20 @@ class Ui_MainWindow(object):
                 self.generateReportBtn.setFixedSize(QSize(200, 50))
                 self.generateReportBtn.setObjectName(u"generateReportBtn")
                 self.generateReportBtn.setFont(font)
-                self.generateReportBtn.setStyleSheet(u"background-color: #343b47;""color: #fff;")
+                self.generateReportBtn.setStyleSheet(
+                                                                "QPushButton {"
+                                                                "   background-color: #343b47;"
+                                                                "   color: #fff;"
+                                                                "}"
+                                                                "QPushButton:hover {"
+                                                                "   background-color: #2c313c;"
+                                                                "   color: #fff;"
+                                                                "}"
+                                                                "QPushButton:pressed {"
+                                                                "   background-color: #16191d;"
+                                                                "   color: #fff;"
+                                                                "}"
+                                                        )
                 self.generateReportBtn.clicked.connect(self.fill_tables)
                 self.verticalLayout_16.addWidget(self.generateReportBtn)
                 self.verticalLayout_16.setAlignment(self.generateReportBtn, Qt.AlignCenter)
@@ -695,7 +721,7 @@ class Ui_MainWindow(object):
                 self.retranslateUi(MainWindow)
 
                 self.centerMenuPages.setCurrentIndex(0)
-                self.mainPages.setCurrentIndex(2)
+                self.mainPages.setCurrentIndex(0)
                 self.rightMenuPages.setCurrentIndex(0)
 
 
@@ -709,7 +735,7 @@ class Ui_MainWindow(object):
                 if self.file_path:
                         self.file = decode(self.file_path)
                         self.label_10 = QLabel(self.page_6)
-                        self.label_10.setText(f'File: {self.file_path}')
+                        self.label_10.setText(f'FILE OPENED: {self.file_path}')
                         self.label_10.setFont(QFont("Arial", 13, QFont.Bold))
                         self.label_10.setAlignment(Qt.AlignCenter)
                         self.verticalLayout_16.addWidget(self.label_10)
@@ -1018,8 +1044,8 @@ class Ui_MainWindow(object):
                                         self.table21.setItem(row, col, new_item)
                                         self.table21.item(row,col).setTextAlignment(Qt.AlignCenter)
                                 
-
                 self.verticalLayout_18.addWidget(self.table21)
+                
 
        
 
