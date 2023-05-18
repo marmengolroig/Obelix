@@ -16,7 +16,6 @@ import resources_rc
 
 from decoder import decode
 
-
 class Ui_MainWindow(object):
         def setupUi(self, MainWindow):
                 if not MainWindow.objectName():
@@ -477,11 +476,39 @@ class Ui_MainWindow(object):
                 self.mainPages.addWidget(self.page_6)
 
                 # SHOW IN MAP BUTTON
+                self.showInMapBtn = QPushButton(self.page_6)
+                self.showInMapBtn.setFixedSize(QSize(200, 50))
+                self.showInMapBtn.setObjectName(u"showInMapBtn")
+                self.showInMapBtn.setFont(font)
+                self.showInMapBtn.setStyleSheet(
+                                                "QPushButton {"
+                                                "   background-color: #343b47;"
+                                                "   color: #fff;"
+                                                "}"
+                                                "QPushButton:hover {"
+                                                "   background-color: #2c313c;"
+                                                "   color: #fff;"
+                                                "}"
+                                                "QPushButton:pressed {"
+                                                "   background-color: #16191d;"
+
+                                                "   color: #fff;"
+                                                "}"
+                )
+                self.planes = []
+                self.showInMapBtn.clicked.connect(self.show_in_map)
+                self.verticalLayout_16.addWidget(self.showInMapBtn)
+                self.verticalLayout_16.setAlignment(self.showInMapBtn, Qt.AlignCenter)
+                self.mainPages.addWidget(self.page_6)
+
+
+                # SHOW IN MAP BUTTON
 
                 # Create a sub-layout to center the buttons
                 self.home_center_layout = QVBoxLayout()
                 self.home_center_layout.addWidget(self.openFileBtn)
                 self.home_center_layout.addWidget(self.generateReportBtn)
+                self.home_center_layout.addWidget(self.showInMapBtn)
                 self.home_center_layout.addStretch(1)
 
                 # Set the sub-layout as the central layout
@@ -504,7 +531,7 @@ class Ui_MainWindow(object):
 
                 # Get the absolute path to the HTML file
                 script_dir = os.path.dirname(os.path.abspath(__file__))
-                html_path = os.path.join(script_dir, "map.html")
+                self.html_path = os.path.join(script_dir, "map.html")
 
                 # Specify the path to the shapefile (.shp) file
                 shapefile_path = 'airports/ne_10m_airports.shp'
@@ -518,17 +545,22 @@ class Ui_MainWindow(object):
                 bcn_airport_lon = bcn_airport['geometry'].x.iloc[0]
 
                 # Create a Folium map
-                m = folium.Map(location=[bcn_airport_lat, bcn_airport_lon], zoom_start=12.5)
+                self.m = folium.Map(location=[bcn_airport_lat, bcn_airport_lon], zoom_start=12.5)
 
                 # Save the Folium map as an HTML file
-                m.save(html_path)
+                self.m.save(self.html_path)
 
                 # Create a QWebEngineView widget
                 self.webview = QWebEngineView(self.page_7)
                 self.verticalLayout_17.addWidget(self.webview)
 
                 # Load the HTML file in the QWebEngineView widget
-                self.webview.load(QUrl.fromLocalFile(html_path))
+                self.webview.load(QUrl.fromLocalFile(self.html_path))
+
+                # Start the timer to update plane positions
+                #self.timer = QTimer()
+                #self.timer.timeout.connect(self.updatePlanePositions)
+                #self.timer.start(1000)  # Update every 1 second
 
                 #### AQUI COMENÇA EL NOSTRE CODI de mapes
 
@@ -730,6 +762,34 @@ class Ui_MainWindow(object):
 
         # Function to handle button click event
         def open_file_dialog(self):
+                self.generateReportBtn.setStyleSheet(
+                                                                "QPushButton {"
+                                                                "   background-color: #343b47;"
+                                                                "   color: #fff;"
+                                                                "}"
+                                                                "QPushButton:hover {"
+                                                                "   background-color: #2c313c;"
+                                                                "   color: #fff;"
+                                                                "}"
+                                                                "QPushButton:pressed {"
+                                                                "   background-color: #16191d;"
+                                                                "   color: #fff;"
+                                                                "}"
+                                                        )
+                self.showInMapBtn.setStyleSheet(
+                                                                "QPushButton {"
+                                                                "   background-color: #343b47;"
+                                                                "   color: #fff;"
+                                                                "}"
+                                                                "QPushButton:hover {"
+                                                                "   background-color: #2c313c;"
+                                                                "   color: #fff;"
+                                                                "}"
+                                                                "QPushButton:pressed {"
+                                                                "   background-color: #16191d;"
+                                                                "   color: #fff;"
+                                                                "}"
+                                                        )
                 self.file_dialog = QFileDialog()
                 self.file_path, _ = self.file_dialog.getOpenFileName(self.page_6, "Open File", "", "All Files (*.*)")
                 if self.file_path:
@@ -740,8 +800,17 @@ class Ui_MainWindow(object):
                         self.label_10.setAlignment(Qt.AlignCenter)
                         self.verticalLayout_16.addWidget(self.label_10)
                         self.verticalLayout_16.setAlignment(self.label_10, Qt.AlignLeft)
-                       
+
+
+        # Function to handle button click event     
         def fill_tables(self):
+                self.time = 0
+                self.x = 0
+                self.y = 0
+                self.z = 0
+                self.FL = 0
+                self.plane_id = ""
+                self.traffic_type = ""
                 self.table_title = QLabel(self.page_8)
                 self.table_title.setObjectName(u"table_title")
                 self.table_title.setFont(QFont("Arial", 13, QFont.Bold))
@@ -828,20 +897,30 @@ class Ui_MainWindow(object):
                                 while n<len(dataitems_list):
                                         self.table.setItem(m, 0, QTableWidgetItem(f'{self.file.datablock_list[m].cat}')) # Category
                                         if dataitems_list[n].FRN == 1 and dataitems_list[n].dataitem != None: # SAC/SIC
-                                                self.table.setItem(m, 1, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data[0]}'))
-                                                self.table.setItem(m, 2, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data[1]}'))
+                                                SAC = dataitems_list[n].dataitem.decoded_data[0]
+                                                SIC = dataitems_list[n].dataitem.decoded_data[1]
+                                                self.table.setItem(m, 1, QTableWidgetItem(f'{SAC}'))
+                                                self.table.setItem(m, 2, QTableWidgetItem(f'{SIC}'))
+                                                if SIC == 7:
+                                                        self.traffic_type = 'SMR'
+                                                elif SIC == 107:
+                                                        self.traffic_type = 'MLAT'
+                                                
                                         elif dataitems_list[n].FRN == 2 and dataitems_list[n].dataitem != None: # Message Type
                                                 self.table.setItem(m, 3, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
                                         elif dataitems_list[n].FRN == 3 and dataitems_list[n].dataitem != None: # Target Report Descriptor
                                                 self.table.setItem(m, 4, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
                                         elif dataitems_list[n].FRN == 4 and dataitems_list[n].dataitem != None: # Time of Day
                                                 self.table.setItem(m, 5, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
+                                                self.time = dataitems_list[n].dataitem.decoded_data # TIME
                                         elif dataitems_list[n].FRN == 5 and dataitems_list[n].dataitem != None: # Position in WGS-84 coordinates
                                                 self.table.setItem(m, 6, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
                                         elif dataitems_list[n].FRN == 6 and dataitems_list[n].dataitem != None: # Position in polar coordinates
                                                 self.table.setItem(m, 7, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
                                         elif dataitems_list[n].FRN == 7 and dataitems_list[n].dataitem != None: # Position in Cartesian coordinates
                                                 self.table.setItem(m, 8, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
+                                                self.x = dataitems_list[n].dataitem.decoded_data[0] # X
+                                                self.y = dataitems_list[n].dataitem.decoded_data[1] # Y
                                         elif dataitems_list[n].FRN == 8 and dataitems_list[n].dataitem != None: # Calculated Track Velocity in polar coordinates
                                                 self.table.setItem(m, 9, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
                                         elif dataitems_list[n].FRN == 9 and dataitems_list[n].dataitem != None: # Calculated Track Velocity in Cartesian coordinates
@@ -854,6 +933,7 @@ class Ui_MainWindow(object):
                                                 self.table.setItem(m, 13, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
                                         elif dataitems_list[n].FRN == 13 and dataitems_list[n].dataitem != None: # Target Address
                                                 self.table.setItem(m, 14, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
+                                                self.plane_id = dataitems_list[n].dataitem.decoded_data # PLANE ID
                                         elif dataitems_list[n].FRN == 14 and dataitems_list[n].dataitem != None: # Target Identification
                                                 self.table.setItem(m, 15, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
                                         elif dataitems_list[n].FRN == 15 and dataitems_list[n].dataitem != None: # Mode-S MB Data
@@ -862,6 +942,7 @@ class Ui_MainWindow(object):
                                                 self.table.setItem(m, 17, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
                                         elif dataitems_list[n].FRN == 17 and dataitems_list[n].dataitem != None: # Flight Level in Binary Representation
                                                 self.table.setItem(m, 18, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
+                                                self.FL = dataitems_list[n].dataitem.decoded_data # FL
                                         elif dataitems_list[n].FRN == 18 and dataitems_list[n].dataitem != None: # Measured Height
                                                 self.table.setItem(m, 19, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
                                         elif dataitems_list[n].FRN == 19 and dataitems_list[n].dataitem != None: # Target Size & Orientation
@@ -880,8 +961,18 @@ class Ui_MainWindow(object):
                                                 self.table.setItem(m, 26, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}')) 
                                         
                                         n=n+1
+                                self.plane = {
+                                        'plane_id': self.plane_id,
+                                        'time': self.time,
+                                        'lat': 0,
+                                        'lon': 0,
+                                        'traffic_type': self.traffic_type,
+                                        'FL': self.FL,
+                                }
+                                self.planes.append(self.plane)
                                 
                         elif self.file.datablock_list[m].cat == 21:
+                                self.traffic_type = 'ADS-B'
                                 self.table21.setRowCount(row21)
                                 row21 = row21 + 1
                                 k=0
@@ -902,6 +993,8 @@ class Ui_MainWindow(object):
                                                 self.table21.setItem(m, 7, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
                                         elif dataitems_list[k].FRN == 7 and dataitems_list[k].dataitem != None: # Position in WGS-84, high res.
                                                 self.table21.setItem(m, 8, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
+                                                self.lat = dataitems_list[k].dataitem.decoded_data[0] # LATITUDE
+                                                self.lon = dataitems_list[k].dataitem.decoded_data[1] # LONGITUDE
                                         elif dataitems_list[k].FRN == 8 and dataitems_list[k].dataitem != None: # Time of Applicability for Velocity
                                                 self.table21.setItem(m, 9, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
                                         elif dataitems_list[k].FRN == 9 and dataitems_list[k].dataitem != None: # Airspeed
@@ -910,6 +1003,7 @@ class Ui_MainWindow(object):
                                                 self.table21.setItem(m, 11, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
                                         elif dataitems_list[k].FRN == 11 and dataitems_list[k].dataitem != None: # Target Address
                                                 self.table21.setItem(m, 12, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
+                                                self.plane_id = dataitems_list[k].dataitem.decoded_data # PLANE ID
                                         elif dataitems_list[k].FRN == 12 and dataitems_list[k].dataitem != None: # Time of Message Reception for Position
                                                 self.table21.setItem(m, 13, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
                                         elif dataitems_list[k].FRN == 13 and dataitems_list[k].dataitem != None: # Time of Message Reception for Position, high precision
@@ -930,6 +1024,7 @@ class Ui_MainWindow(object):
                                                 self.table21.setItem(m, 21, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
                                         elif dataitems_list[k].FRN == 21 and dataitems_list[k].dataitem != None: # Flight Level in Binary Representation
                                                 self.table21.setItem(m, 22, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
+                                                self.FL = dataitems_list[k].dataitem.decoded_data # FL
                                         elif dataitems_list[k].FRN == 22 and dataitems_list[k].dataitem != None: # Magnetic Heading
                                                 self.table21.setItem(m, 23, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
                                         elif dataitems_list[k].FRN == 23 and dataitems_list[k].dataitem != None: # Target Status
@@ -944,7 +1039,17 @@ class Ui_MainWindow(object):
                                                 self.table21.setItem(m, 28, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
                                         elif dataitems_list[k].FRN == 28 and dataitems_list[k].dataitem != None: # Time of Report Transmission for Position
                                                 self.table21.setItem(m, 29, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
+                                                self.time = dataitems_list[k].dataitem.decoded_data # TIME
                                         k=k+1
+                                self.plane = {
+                                        "plane_id": self.plane_id,
+                                        "time": self.time,
+                                        "lat": self.lat,
+                                        "lon": self.lon,
+                                        "traffic_type": self.traffic_type,
+                                        "FL": self.FL,
+                                }
+                                self.planes.append(self.plane)
                         else:
                                 row21 = row21 + 1
                                         
@@ -1040,7 +1145,26 @@ class Ui_MainWindow(object):
                                         self.table21.item(row,col).setTextAlignment(Qt.AlignCenter)
                                 
                 self.verticalLayout_18.addWidget(self.table21)
+                self.generateReportBtn.setStyleSheet("background-color: green;")
                 
+        
+        def show_in_map(self):
+                self.showInMapBtn.setStyleSheet("background-color: green;")
+                count = 0
+                for plane in self.planes:
+                        count += 1
+                        folium.Marker(location=[plane['lat'], plane['lon']], 
+                        popup=f"ID: {plane['plane_id']}",
+                        icon=folium.Icon(color='red', icon='plane', prefix='fa')
+                        ).add_to(self.m)
+                        if count == 5:
+                                break
+                # Save the Folium map as an HTML file
+                self.m.save(self.html_path)
+
+                # Load the HTML file in the QWebEngineView widget
+                self.webview.load(QUrl.fromLocalFile(self.html_path))
+                print(self.planes[-5])
 
        
 
@@ -1048,6 +1172,7 @@ class Ui_MainWindow(object):
                 MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
                 self.openFileBtn.setText(QCoreApplication.translate("MainWindow", u"Open File", None))
                 self.generateReportBtn.setText(QCoreApplication.translate("MainWindow", u"Generate Reports", None))
+                self.showInMapBtn.setText(QCoreApplication.translate("MainWindow", u"Generate Map View", None))
         #if QT_CONFIG(tooltip)
                 self.menuBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Menu", None))
         #endif // QT_CONFIG(tooltip)
