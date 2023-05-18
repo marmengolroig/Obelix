@@ -15,6 +15,7 @@ from Custom_Widgets.Widgets import QCustomStackedWidget
 import resources_rc
 
 from decoder import decode
+from geoutils import *
 
 class Ui_MainWindow(object):
         def setupUi(self, MainWindow):
@@ -888,7 +889,8 @@ class Ui_MainWindow(object):
                 m=0
                 row = 1
                 row21 = 1
-                while m<len(self.file.datablock_list):
+                while m<1000:
+                #while m<len(self.file.datablock_list):
                         dataitems_list = self.file.datablock_list[m].record.dataitems_list
                         if self.file.datablock_list[m].cat == 10:
                                 self.table.setRowCount(row)
@@ -903,8 +905,10 @@ class Ui_MainWindow(object):
                                                 self.table.setItem(m, 2, QTableWidgetItem(f'{SIC}'))
                                                 if SIC == 7:
                                                         self.traffic_type = 'SMR'
+                                                        ref = (41.295556, 2.095, 0) # lat, lon, alt
                                                 elif SIC == 107:
                                                         self.traffic_type = 'MLAT'
+                                                        ref = (41.296944, 2.078333, 0) # lat, lon, alt
                                                 
                                         elif dataitems_list[n].FRN == 2 and dataitems_list[n].dataitem != None: # Message Type
                                                 self.table.setItem(m, 3, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
@@ -961,15 +965,18 @@ class Ui_MainWindow(object):
                                                 self.table.setItem(m, 26, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}')) 
                                         
                                         n=n+1
+                                ecef = localCartesian2ECEF(self.x,self.y,self.z,ref[1],ref[0],0)
+                                lonlat = ECEF2geodesic(ecef[0],ecef[1],ecef[2])
                                 self.plane = {
                                         'plane_id': self.plane_id,
                                         'time': self.time,
-                                        'lat': 0,
-                                        'lon': 0,
+                                        'lat': lonlat[1],
+                                        'lon': lonlat[0],
                                         'traffic_type': self.traffic_type,
                                         'FL': self.FL,
                                 }
                                 self.planes.append(self.plane)
+                               
                                 
                         elif self.file.datablock_list[m].cat == 21:
                                 self.traffic_type = 'ADS-B'
@@ -1164,7 +1171,7 @@ class Ui_MainWindow(object):
 
                 # Load the HTML file in the QWebEngineView widget
                 self.webview.load(QUrl.fromLocalFile(self.html_path))
-                print(self.planes[-5])
+                print(self.planes[0])
 
        
 
