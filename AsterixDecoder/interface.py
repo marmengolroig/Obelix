@@ -507,7 +507,7 @@ class Ui_MainWindow(object):
                 html_path = os.path.join(script_dir, "map.html")
 
                 # Specify the path to the shapefile (.shp) file
-                shapefile_path = '/home/judit/projects/Obelix/AsterixDecoder/airports/ne_10m_airports.shp'
+                shapefile_path = 'airports/ne_10m_airports.shp'
 
                 # Read the shapefile using geopandas
                 airports = gpd.read_file(shapefile_path)
