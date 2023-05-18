@@ -14,7 +14,7 @@ from Custom_Widgets.Widgets import QCustomStackedWidget
 
 import resources_rc
 
-from decoder import decoder
+from decoder import decode
 
 
 class Ui_MainWindow(object):
@@ -420,20 +420,57 @@ class Ui_MainWindow(object):
                 self.page_6.setObjectName(u"page_6")
                 self.verticalLayout_16 = QVBoxLayout(self.page_6)
                 self.verticalLayout_16.setObjectName(u"verticalLayout_16")
-                self.label_10 = QLabel(self.page_6)
-                self.label_10.setObjectName(u"label_10")
-                self.label_10.setFont(font)
-                self.label_10.setAlignment(Qt.AlignCenter)
+                # self.label_10 = QLabel(self.page_6)
+                # self.label_10.setObjectName(u"label_10")
+                # self.label_10.setFont(font)
+                # self.label_10.setAlignment(Qt.AlignCenter)
+                # self.verticalLayout_16.addWidget(self.label_10)
 
-                self.verticalLayout_16.addWidget(self.label_10)
+                
 
+                # OPEN FILE BUTTON
+                self.openFileBtn = QPushButton(self.page_6)
+                self.openFileBtn.setFixedSize(QSize(200, 50))
+                self.openFileBtn.setObjectName(u"openFileBtn")
+                self.openFileBtn.setFont(font)
+                self.openFileBtn.setStyleSheet(u"background-color: #343b47;""color: #fff;")
+                self.openFileBtn.clicked.connect(self.open_file_dialog)
+                self.verticalLayout_16.addWidget(self.openFileBtn)
+                self.verticalLayout_16.setAlignment(self.openFileBtn, Qt.AlignCenter)
+                
+
+                # GENERATE REPORT BUTTON
+                self.generateReportBtn = QPushButton(self.page_6)
+                self.generateReportBtn.setFixedSize(QSize(200, 50))
+                self.generateReportBtn.setObjectName(u"generateReportBtn")
+                self.generateReportBtn.setFont(font)
+                self.generateReportBtn.setStyleSheet(u"background-color: #343b47;""color: #fff;")
+                self.generateReportBtn.clicked.connect(self.fill_tables)
+                self.verticalLayout_16.addWidget(self.generateReportBtn)
+                self.verticalLayout_16.setAlignment(self.generateReportBtn, Qt.AlignCenter)
                 self.mainPages.addWidget(self.page_6)
+
+                # SHOW IN MAP BUTTON
+
+                # Create a sub-layout to center the buttons
+                self.home_center_layout = QVBoxLayout()
+                self.home_center_layout.addWidget(self.openFileBtn)
+                self.home_center_layout.addWidget(self.generateReportBtn)
+                self.home_center_layout.addStretch(1)
+
+                # Set the sub-layout as the central layout
+                self.verticalLayout_16.addStretch(1)
+                self.verticalLayout_16.addLayout(self.home_center_layout)
+                self.verticalLayout_16.addStretch(1)
+                self.verticalLayout_16.setAlignment(self.home_center_layout, Qt.AlignCenter)
+
+                
+
+                ##### AQUI COMENÇA EL NOSTRE CODI de mapes
                 self.page_7 = QWidget()
                 self.page_7.setObjectName(u"page_7")
                 self.verticalLayout_17 = QVBoxLayout(self.page_7)
                 self.verticalLayout_17.setObjectName(u"verticalLayout_17")
-
-                ##### AQUI COMENÇA EL NOSTRE CODI de mapes
                 self.label_11 = QLabel(self.page_7)
                 self.label_11.setObjectName(u"label_11")
                 self.label_11.setFont(font)
@@ -490,7 +527,6 @@ class Ui_MainWindow(object):
          ### AQUI ACABA EL NOSTRE CODI
 
                 self.mainPages.addWidget(self.page_8)
-                self.mainPages.setCurrentIndex(0)
 
                 self.verticalLayout_15.addWidget(self.mainPages)
 
@@ -666,6 +702,19 @@ class Ui_MainWindow(object):
                 QMetaObject.connectSlotsByName(MainWindow)
         # setupUi
 
+        # Function to handle button click event
+        def open_file_dialog(self):
+                self.file_dialog = QFileDialog()
+                self.file_path, _ = self.file_dialog.getOpenFileName(self.page_6, "Open File", "", "All Files (*.*)")
+                if self.file_path:
+                        self.file = decode(self.file_path)
+                        self.label_10 = QLabel(self.page_6)
+                        self.label_10.setText(f'File: {self.file_path}')
+                        self.label_10.setFont(QFont("Arial", 13, QFont.Bold))
+                        self.label_10.setAlignment(Qt.AlignCenter)
+                        self.verticalLayout_16.addWidget(self.label_10)
+                        self.verticalLayout_16.setAlignment(self.label_10, Qt.AlignLeft)
+                       
         def fill_tables(self):
                 self.table_title = QLabel(self.page_8)
                 self.table_title.setObjectName(u"table_title")
@@ -673,9 +722,6 @@ class Ui_MainWindow(object):
                 self.table_title.setAlignment(Qt.AlignLeft)
                 # ADD WIDGET
                 self.verticalLayout_18.addWidget(self.table_title)
-
-
-                file = decoder() 
 
                 self.table.setObjectName(u"table")
                 self.table21.setObjectName(u"table21")
@@ -747,14 +793,14 @@ class Ui_MainWindow(object):
                 m=0
                 row = 1
                 row21 = 1
-                while m<len(file.datablock_list):
-                        dataitems_list = file.datablock_list[m].record.dataitems_list
-                        if file.datablock_list[m].cat == 10:
+                while m<len(self.file.datablock_list):
+                        dataitems_list = self.file.datablock_list[m].record.dataitems_list
+                        if self.file.datablock_list[m].cat == 10:
                                 self.table.setRowCount(row)
                                 row = row + 1
                                 n=0
                                 while n<len(dataitems_list):
-                                        self.table.setItem(m, 0, QTableWidgetItem(f'{file.datablock_list[m].cat}')) # Category
+                                        self.table.setItem(m, 0, QTableWidgetItem(f'{self.file.datablock_list[m].cat}')) # Category
                                         if dataitems_list[n].FRN == 1 and dataitems_list[n].dataitem != None: # SAC/SIC
                                                 self.table.setItem(m, 1, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()[0]}'))
                                                 self.table.setItem(m, 2, QTableWidgetItem(f'{dataitems_list[n].dataitem.decode_data()[1]}'))
@@ -809,12 +855,12 @@ class Ui_MainWindow(object):
                                         
                                         n=n+1
                                 
-                        elif file.datablock_list[m].cat == 21:
+                        elif self.file.datablock_list[m].cat == 21:
                                 self.table21.setRowCount(row21)
                                 row21 = row21 + 1
                                 k=0
                                 while k<len(dataitems_list):
-                                        self.table21.setItem(m, 0, QTableWidgetItem(f'{file.datablock_list[m].cat}')) # Category
+                                        self.table21.setItem(m, 0, QTableWidgetItem(f'{self.file.datablock_list[m].cat}')) # Category
                                         if dataitems_list[k].FRN == 1 and dataitems_list[k].dataitem != None: # SAC/SIC
                                                 self.table21.setItem(m, 1, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()[0]}'))
                                                 self.table21.setItem(m, 2, QTableWidgetItem(f'{dataitems_list[k].dataitem.decode_data()[1]}'))
@@ -979,6 +1025,8 @@ class Ui_MainWindow(object):
 
         def retranslateUi(self, MainWindow):
                 MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+                self.openFileBtn.setText(QCoreApplication.translate("MainWindow", u"Open File", None))
+                self.generateReportBtn.setText(QCoreApplication.translate("MainWindow", u"Generate Reports", None))
         #if QT_CONFIG(tooltip)
                 self.menuBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Menu", None))
         #endif // QT_CONFIG(tooltip)
@@ -1038,7 +1086,7 @@ class Ui_MainWindow(object):
                 self.closeBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close Window", None))
         #endif // QT_CONFIG(tooltip)
                 self.closeBtn.setText("")
-                self.label_10.setText(QCoreApplication.translate("MainWindow", u"Home", None))
+                # self.label_10.setText(QCoreApplication.translate("MainWindow", u"Home", None))
                 self.label_11.setText(QCoreApplication.translate("MainWindow", u"Map View", None))
                 self.label_12.setText(QCoreApplication.translate("MainWindow", u"Reports", None))
                 # self.table_title21.setText(QCoreApplication.translate("MainWindow", u"CAT 21", None))
