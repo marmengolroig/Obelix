@@ -599,7 +599,9 @@ class Ui_MainWindow(object):
         
                 # Get the absolute path to the HTML file
                 script_dir = os.path.dirname(os.path.abspath(__file__))
-                self.html_path = os.path.join(script_dir, "map.html")
+                self.empty_html_path = os.path.join(script_dir, "empty_map.html")
+                self.full_html_path = os.path.join(script_dir, "full_map.html")
+                self.temp_html_path = os.path.join(script_dir, "temp_map.html")
 
                 # Specify the path to the shapefile (.shp) file
                 shapefile_path = 'airports/ne_10m_airports.shp'
@@ -619,7 +621,7 @@ class Ui_MainWindow(object):
                 self.marker_group = folium.FeatureGroup(name='Markers')     
 
                 # Save the Folium map as an HTML file
-                self.m.save(self.html_path)
+                self.m.save(self.empty_html_path)
 
                 # Create a QWebEngineView widget
                 self.webview = QWebEngineView(self.page_7)
@@ -629,7 +631,7 @@ class Ui_MainWindow(object):
                 self.verticalLayout_17.addStretch(1)
 
                 # Load the HTML file in the QWebEngineView widget
-                self.webview.load(QUrl.fromLocalFile(self.html_path))
+                self.webview.load(QUrl.fromLocalFile(self.empty_html_path))
 
                 # Start the timer to update plane positions
                 #self.timer = QTimer()
@@ -1236,12 +1238,6 @@ class Ui_MainWindow(object):
                 
         
         def show_in_map(self):
-                generateGEOJSON(self.planes)
-                
-                with open('data.geojson') as j:
-                        data = json.load(j)
-                
-                TimestampedGeoJson(data, transition_time=20)
                 for plane in self.planes:
 
                         html = f"{plane['traffic_type']}<br>TA: {plane['plane_id']}<br>FL: {plane['FL']}"
@@ -1269,10 +1265,10 @@ class Ui_MainWindow(object):
                                 ))
                                 self.marker_group.add_to(self.m)
                 # Save the Folium map as an HTML file
-                self.m.save(self.html_path)
+                self.m.save(self.full_html_path)
 
                 # Load the HTML file in the QWebEngineView widget
-                self.webview.load(QUrl.fromLocalFile(self.html_path))
+                self.webview.load(QUrl.fromLocalFile(self.full_html_path))
                 print(self.planes[0])
                 self.showInMapBtn.setStyleSheet("background-color: green;")
         
@@ -1301,7 +1297,7 @@ class Ui_MainWindow(object):
                 self.stopBtn.setStyleSheet("background-color: red;")
                 self.timeLabel.setText("Simulation is paused...")
         
-        def stop_simulation(self):
+        def stop_simulation(self): 
                 self.timer.stop()
                 self.playBtn.setEnabled(True)
                 self.pauseBtn.setEnabled(False)
@@ -1313,45 +1309,51 @@ class Ui_MainWindow(object):
         
         def update_simulation(self):
         
-                self.current_time = self.simulation_times[0] + self.start_time.elapsed()/1000 
+                self.current_time = self.simulation_times[0] + self.start_time.elapsed()/1000
+                
                 if self.current_time < self.simulation_times[-1]:
                         self.timeLabel.setText("Simulation is running... Time: " + str(self.current_time))
                         self.update_map()
         
         def update_map(self):
-                # Clear markers
-                self.marker_group.clearLayers()
-                self.m.save(self.html_path)
-                self.webview.load(QUrl.fromLocalFile(self.html_path))
-                # Print in map markers for planes in current time
-                for plane in self.planes:
-                        if  self.current_time -1 <= plane['time'] <= self.current_time:
-                                html = f"{plane['traffic_type']}<br>TA: {plane['plane_id']}<br>FL: {plane['FL']}"
-                                iframe = folium.IFrame(html,
-                                width=100,
-                                height=80)
-                                if plane['traffic_type']=='SMR':
-                                        self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
-                                        popup=folium.Popup(plane['traffic_type'], width=70),
+                # Upload empty map
+                self.webview.load(QUrl.fromLocalFile(self.empty_html_path))
+                
+                self.marker_group.add_child(folium.Marker(location=[self.planes[0]['lat'], self.planes[0]['lon']], 
+                                        popup=folium.Popup(self.planes[0]['traffic_type'], width=70),
                                         icon=folium.Icon(color='red', icon='plane', prefix='fa')
                                         ))
-                                        self.marker_group.add_to(self.m)
-                                elif plane['traffic_type']=='MLAT':
-                                        self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
-                                        popup=folium.Popup(iframe,max_width=300),
-                                        icon=folium.Icon(color='green', icon='plane', prefix='fa')
-                                        ))
-                                        self.marker_group.add_to(self.m)
-                                elif plane['traffic_type']=='ADS-B':
-                                        self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
-                                        popup=folium.Popup(iframe,max_width=300),
-                                        icon=folium.Icon(color='blue', icon='plane', prefix='fa')
-                                        ))
-                                        self.marker_group.add_to(self.m)
+                self.marker_group.add_to(self.m)
+                
+                # Print in map markers for planes in current time
+                # for plane in self.planes:
+                #         if  self.current_time -1 <= plane['time'] <= self.current_time: # Check if plane is in current time
+                #                 html = f"{plane['traffic_type']}<br>TA: {plane['plane_id']}<br>FL: {plane['FL']}"
+                #                 iframe = folium.IFrame(html,
+                #                 width=100,
+                #                 height=80)
+                #                 if plane['traffic_type']=='SMR':
+                #                         self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
+                #                         popup=folium.Popup(plane['traffic_type'], width=70),
+                #                         icon=folium.Icon(color='red', icon='plane', prefix='fa')
+                #                         ))
+                #                         self.marker_group.add_to(self.m)
+                #                 elif plane['traffic_type']=='MLAT':
+                #                         self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
+                #                         popup=folium.Popup(iframe,max_width=300),
+                #                         icon=folium.Icon(color='green', icon='plane', prefix='fa')
+                #                         ))
+                #                         self.marker_group.add_to(self.m)
+                #                 elif plane['traffic_type']=='ADS-B':
+                #                         self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
+                #                         popup=folium.Popup(iframe,max_width=300),
+                #                         icon=folium.Icon(color='blue', icon='plane', prefix='fa')
+                #                         ))
+                #                         self.marker_group.add_to(self.m)
                 # Save the Folium map as an HTML file
-                self.m.save(self.html_path)
+                self.m.save(self.temp_html_path)
                 # Load the HTML file in the QWebEngineView widget
-                self.webview.load(QUrl.fromLocalFile(self.html_path))
+                self.webview.load(QUrl.fromLocalFile(self.temp_html_path))
 
         def retranslateUi(self, MainWindow):
                 MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))

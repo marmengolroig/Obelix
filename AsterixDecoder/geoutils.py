@@ -1,4 +1,5 @@
 import json
+import datetime
 
 def generateGeoJSON(planes):
     
@@ -41,5 +42,5 @@ def convert_time(seconds):
     # Format the datetime object as an ISO 8601 timestamp
     time_iso8601 = new_datetime.isoformat()
 
-    return(time_iso8601)
+    return(time_iso8601[:19])
 
