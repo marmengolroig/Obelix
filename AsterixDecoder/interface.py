@@ -517,14 +517,13 @@ class Ui_MainWindow(object):
                 self.verticalLayout_16.addStretch(1)
                 self.verticalLayout_16.setAlignment(self.home_center_layout, Qt.AlignCenter)
 
-                
-
                 ##### AQUI COMENÇA EL NOSTRE CODI de mapes
                 self.page_7 = QWidget()
                 self.page_7.setObjectName(u"page_7")
                 self.verticalLayout_17 = QVBoxLayout(self.page_7)
                 self.verticalLayout_17.setObjectName(u"verticalLayout_17")
 
+                # PLAY BUTTON
                 self.playBtn = QPushButton(self.page_7)
                 self.playBtn.setFixedSize(QSize(30, 30))
                 self.playBtn.setIcon(QIcon('icons/play.svg'))
@@ -539,7 +538,9 @@ class Ui_MainWindow(object):
                                                 "   background-color: #16191d;"
                                                 "}"
                                         )
+                self.playBtn.clicked.connect(self.play_simulation)
 
+                # PAUSE BUTTON
                 self.pauseBtn = QPushButton(self.page_7)
                 self.pauseBtn.setFixedSize(QSize(30, 30))
                 self.pauseBtn.setIcon(QIcon('icons/pause.svg'))
@@ -554,7 +555,9 @@ class Ui_MainWindow(object):
                                                 "   background-color: #16191d;"
                                                 "}"
                                         )
-                
+                self.pauseBtn.clicked.connect(self.pause_simulation)
+
+                # STOP BUTTON
                 self.stopBtn = QPushButton(self.page_7)
                 self.stopBtn.setFixedSize(QSize(30, 30))
                 self.stopBtn.setIcon(QIcon('icons/square.svg'))
@@ -569,6 +572,9 @@ class Ui_MainWindow(object):
                                                 "   background-color: #16191d;"
                                                 "}"
                                         )
+                self.stopBtn.clicked.connect(self.stop_simulation)
+
+                # TIME LABEL
                 self.timeLabel = QLabel("Simulation Time", self.page_7)
                 self.timeLabel.setObjectName(u"timeLabel")
                 self.timeLabel.setFont(font)
@@ -577,8 +583,6 @@ class Ui_MainWindow(object):
                                                 "   color: #838ea2;"
                                                 "}"
                                         )
-
-                        
 
                 self.menu_layout = QHBoxLayout()
                 self.menu_layout.addWidget(self.playBtn)
@@ -591,8 +595,7 @@ class Ui_MainWindow(object):
                 self.verticalLayout_17.setContentsMargins(0, 0, 0, 0)
                 self.verticalLayout_17.setSpacing(0)
 
-                
-
+        
                 # Get the absolute path to the HTML file
                 script_dir = os.path.dirname(os.path.abspath(__file__))
                 self.html_path = os.path.join(script_dir, "map.html")
@@ -605,11 +608,11 @@ class Ui_MainWindow(object):
 
                 # Barcelona Airport
                 bcn_airport = airports[airports['iata_code'] == 'BCN']
-                bcn_airport_lat = bcn_airport['geometry'].y.iloc[0]
-                bcn_airport_lon = bcn_airport['geometry'].x.iloc[0]
+                self.bcn_airport_lat = bcn_airport['geometry'].y.iloc[0]
+                self.bcn_airport_lon = bcn_airport['geometry'].x.iloc[0]
 
                 # Create a Folium map
-                self.m = folium.Map(location=[bcn_airport_lat, bcn_airport_lon], zoom_start=12.5)
+                self.m = folium.Map(location=[self.bcn_airport_lat, self.bcn_airport_lon], zoom_start=12.5)
 
                 # Save the Folium map as an HTML file
                 self.m.save(self.html_path)
@@ -1259,8 +1262,75 @@ class Ui_MainWindow(object):
                 self.webview.load(QUrl.fromLocalFile(self.html_path))
                 print(self.planes[0])
                 self.showInMapBtn.setStyleSheet("background-color: green;")
-
-       
+        
+        def play_simulation(self):
+                # Timer
+                self.timer = QTimer()
+                self.timer.setInterval(1000)
+                self.timer.timeout.connect(self.update_simulation)
+                self.timer.start(1000)
+                self.playBtn.setEnabled(False)
+                self.pauseBtn.setEnabled(True)
+                self.stopBtn.setEnabled(True)
+                self.playBtn.setStyleSheet("background-color: grey;")
+                self.pauseBtn.setStyleSheet("background-color: green;")
+                self.stopBtn.setStyleSheet("background-color: red;")
+        
+        def pause_simulation(self):
+                self.timer.stop()
+                self.playBtn.setEnabled(True)
+                self.pauseBtn.setEnabled(False)
+                self.stopBtn.setEnabled(True)
+                self.playBtn.setStyleSheet("background-color: green;")
+                self.pauseBtn.setStyleSheet("background-color: grey;")
+                self.stopBtn.setStyleSheet("background-color: red;")
+                self.timeLabel.setText("Simulation is paused...")
+        
+        def stop_simulation(self):
+                self.timer.stop()
+                self.playBtn.setEnabled(True)
+                self.pauseBtn.setEnabled(False)
+                self.stopBtn.setEnabled(False)
+                self.playBtn.setStyleSheet("background-color: green;")
+                self.pauseBtn.setStyleSheet("background-color: grey;")
+                self.stopBtn.setStyleSheet("background-color: grey;")
+                self.timeLabel.setText("Simulation is stopped...")
+        
+        def update_simulation(self):
+                self.current_time = QDateTime.currentDateTime()
+                self.timeLabel.setText("Simulation is running... Time: " + str(self.current_time.toString(Qt.ISODate)))
+                self.update_map()
+        
+        def update_map(self):
+                # Clear map
+                self.m = folium.Map(location=[self.bcn_airport_lat, self.bcn_airport_lon], zoom_start=10)
+                self.webview.load(QUrl.fromLocalFile(self.html_path))
+                # Print in map markers for planes in current time
+                for plane in self.planes:
+                        if self.current_time < plane['time'] < self.current_time + 1:
+                                html = f"{plane['traffic_type']}<br>TA: {plane['plane_id']}<br>FL: {plane['FL']}"
+                                iframe = folium.IFrame(html,
+                                width=100,
+                                height=80)
+                                if plane['traffic_type']=='SMR':
+                                        folium.Marker(location=[plane['lat'], plane['lon']], 
+                                        popup=folium.Popup(plane['traffic_type'], width=70),
+                                        icon=folium.Icon(color='red', icon='plane', prefix='fa')
+                                        ).add_to(self.m)
+                                elif plane['traffic_type']=='MLAT':
+                                        folium.Marker(location=[plane['lat'], plane['lon']], 
+                                        popup=folium.Popup(iframe,max_width=300),
+                                        icon=folium.Icon(color='green', icon='plane', prefix='fa')
+                                        ).add_to(self.m)
+                                elif plane['traffic_type']=='ADS-B':
+                                        folium.Marker(location=[plane['lat'], plane['lon']], 
+                                        popup=folium.Popup(iframe,max_width=300),
+                                        icon=folium.Icon(color='blue', icon='plane', prefix='fa')
+                                        ).add_to(self.m)
+                # Save the Folium map as an HTML file
+                self.m.save(self.html_path)
+                # Load the HTML file in the QWebEngineView widget
+                self.webview.load(QUrl.fromLocalFile(self.html_path))
 
         def retranslateUi(self, MainWindow):
                 MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
