@@ -1,38 +1,46 @@
-import math
-import pyproj
+import json
+import datetime
 
-def localCartesian2ECEF(easting,northing,up,ref_lon,ref_lat,ref_height):
-    a = 6378137.0  # Earth's semi-major axis (meters)
-    e = 0.0818191908426  # Earth's eccentricity
-    ref_lon=ref_lon*math.pi/180
-    ref_lat=ref_lat*math.pi/180
+def generateGeoJSON(planes):
+    
+    features = []
 
-    N = a / math.sqrt(1 - (e * math.sin(ref_lat)) ** 2)  # Radius of curvature in the prime vertical
+    for plane_data in planes:
+        feature = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [plane_data["lon"], plane_data["lat"]]
+            },
+            "properties": {
+                "time": convert_time(plane_data["time"]),
+                "plane_id": plane_data["plane_id"],
+                "traffic_type": plane_data["traffic_type"],
+                "FL": plane_data["FL"]
+            }
+        }
+    features.append(feature)
+    
+    geojson_data = {
+    "type": "FeatureCollection",
+    "features": features
+}
 
-    ref_x_ecef = (N + ref_height) * math.cos(ref_lat) * math.cos(ref_lon)
-    ref_y_ecef = (N + ref_height) * math.cos(ref_lat) * math.sin(ref_lon)
-    ref_z_ecef = ((1 - e ** 2) * N + ref_height) * math.sin(ref_lat)
+    with open("data.geojson", "w") as f:
+        json.dump(geojson_data, f)
+        
+def convert_time(seconds):
+    current_datetime = datetime.datetime.now()
 
-    # Convert local ENU coordinates to ECEF
-    cos_lon = math.cos(ref_lon)
-    sin_lon = math.sin(ref_lon)
-    cos_lat = math.cos(ref_lat)
-    sin_lat = math.sin(ref_lat)
+    current_date = current_datetime.date()
+    current_time = current_datetime.time()
 
-    x_ecef = ref_x_ecef - sin_lon * easting - cos_lon * sin_lat * northing + cos_lon * cos_lat * up
-    y_ecef = ref_y_ecef + cos_lon * easting - sin_lon * sin_lat * northing + cos_lon * sin_lat * up
-    z_ecef = ref_z_ecef + cos_lat * northing + sin_lat * up
+    provided_seconds = seconds  # Replace with your provided time in seconds
 
-    return (x_ecef,y_ecef,z_ecef)
+    new_datetime = datetime.datetime.combine(current_date, datetime.time()) + datetime.timedelta(seconds=provided_seconds)
 
-def ECEF2geodesic(x_ecef,y_ecef,z_ecef):
-    ecef_to_wgs84 = pyproj.Transformer.from_crs('EPSG:4978', 'EPSG:4326', always_xy=True)
+    # Format the datetime object as an ISO 8601 timestamp
+    time_iso8601 = new_datetime.isoformat()
 
-    # Convert ECEF coordinates to WGS84 geodesic coordinates
-    lon, lat, height = ecef_to_wgs84.transform(x_ecef, y_ecef, z_ecef)
+    return(time_iso8601[:19])
 
-    return (lon,lat,height)
-
-# ecef = localCartesian2ECEF(285,1020,0,41.296944,2.078333,0)
-# geodesic = ECEF2geodesic(ecef[0],ecef[1],ecef[2])
-# print(geodesic)

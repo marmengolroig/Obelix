@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [2.861550588296455, 41.88210763916184]}, "properties": {"time": "2023-05-19T08:03:09", "plane_id": "", "traffic_type": "SMR", "FL": 0}}]}
