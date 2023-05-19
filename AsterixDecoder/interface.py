@@ -3,6 +3,7 @@ sys.path.append("..")
 import geopandas as gpd
 import os
 import folium
+import pymap3d as pm
 
 from PySide2.QtCore import *
 from PySide2.QtGui import *
@@ -525,10 +526,7 @@ class Ui_MainWindow(object):
                 self.page_7.setObjectName(u"page_7")
                 self.verticalLayout_17 = QVBoxLayout(self.page_7)
                 self.verticalLayout_17.setObjectName(u"verticalLayout_17")
-                self.label_11 = QLabel(self.page_7)
-                self.label_11.setObjectName(u"label_11")
-                self.label_11.setFont(font)
-                self.label_11.setAlignment(Qt.AlignCenter)
+                
 
                 # Get the absolute path to the HTML file
                 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -741,6 +739,7 @@ class Ui_MainWindow(object):
                 self.sizeGrip.setFrameShape(QFrame.StyledPanel)
                 self.sizeGrip.setFrameShadow(QFrame.Raised)
 
+
                 self.horizontalLayout_11.addWidget(self.sizeGrip)
 
 
@@ -812,12 +811,7 @@ class Ui_MainWindow(object):
                 self.FL = 0
                 self.plane_id = ""
                 self.traffic_type = ""
-                self.table_title = QLabel(self.page_8)
-                self.table_title.setObjectName(u"table_title")
-                self.table_title.setFont(QFont("Arial", 13, QFont.Bold))
-                self.table_title.setAlignment(Qt.AlignLeft)
-                # ADD WIDGET
-                self.verticalLayout_18.addWidget(self.table_title)
+                
 
                 self.table.setObjectName(u"table")
                 self.table21.setObjectName(u"table21")
@@ -905,10 +899,14 @@ class Ui_MainWindow(object):
                                                 self.table.setItem(m, 2, QTableWidgetItem(f'{SIC}'))
                                                 if SIC == 7:
                                                         self.traffic_type = 'SMR'
-                                                        ref = (41.295556, 2.095, 0) # lat, lon, alt
+                                                        lat0=41.295556
+                                                        lon0=2.095
+                                                        h0=0
                                                 elif SIC == 107:
                                                         self.traffic_type = 'MLAT'
-                                                        ref = (41.296944, 2.078333, 0) # lat, lon, alt
+                                                        lat0=41.296944
+                                                        lon0=2.078333
+                                                        h0=0
                                                 
                                         elif dataitems_list[n].FRN == 2 and dataitems_list[n].dataitem != None: # Message Type
                                                 self.table.setItem(m, 3, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
@@ -946,7 +944,7 @@ class Ui_MainWindow(object):
                                                 self.table.setItem(m, 17, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
                                         elif dataitems_list[n].FRN == 17 and dataitems_list[n].dataitem != None: # Flight Level in Binary Representation
                                                 self.table.setItem(m, 18, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                                self.FL = dataitems_list[n].dataitem.decoded_data # FL
+                                                self.FL = dataitems_list[n].dataitem.decoded_data[2] # FL
                                         elif dataitems_list[n].FRN == 18 and dataitems_list[n].dataitem != None: # Measured Height
                                                 self.table.setItem(m, 19, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
                                         elif dataitems_list[n].FRN == 19 and dataitems_list[n].dataitem != None: # Target Size & Orientation
@@ -965,15 +963,15 @@ class Ui_MainWindow(object):
                                                 self.table.setItem(m, 26, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}')) 
                                         
                                         n=n+1
-                                ecef = localCartesian2ECEF(self.x,self.y,self.z,ref[1],ref[0],0)
-                                lonlat = ECEF2geodesic(ecef[0],ecef[1],ecef[2])
+                                lat, lon, alt = pm.enu2geodetic(self.x, self.y, 0, lat0, lon0, h0, ell = pm.Ellipsoid.from_name('wgs84'), deg=True)
                                 self.plane = {
                                         'plane_id': self.plane_id,
                                         'time': self.time,
-                                        'lat': lonlat[1],
-                                        'lon': lonlat[0],
+                                        'lat': lat,
+                                        'lon': lon,
                                         'traffic_type': self.traffic_type,
-                                        'FL': self.FL,
+                                        'FL': int(self.FL),
+                                        'm': m
                                 }
                                 self.planes.append(self.plane)
                                
@@ -1054,7 +1052,7 @@ class Ui_MainWindow(object):
                                         "lat": self.lat,
                                         "lon": self.lon,
                                         "traffic_type": self.traffic_type,
-                                        "FL": self.FL,
+                                        "FL": int(self.FL),
                                 }
                                 self.planes.append(self.plane)
                         else:
@@ -1063,6 +1061,12 @@ class Ui_MainWindow(object):
                         m=m+1
                 
                 # CAT 10 TABLE
+                self.table_title = QLabel(self.page_8)
+                self.table_title.setObjectName(u"table_title")
+                self.table_title.setFont(QFont("Arial", 13, QFont.Bold))
+                self.table_title.setAlignment(Qt.AlignLeft)
+                self.verticalLayout_18.addWidget(self.table_title)
+
                 self.table.setShowGrid(True) # Show grid
                 self.table.setStyleSheet("QTableView { gridline-color: #343b47; }")
                 self.table.resizeColumnsToContents() # Resize columns to contents
@@ -1111,7 +1115,6 @@ class Ui_MainWindow(object):
                 self.verticalLayout_18.addWidget(self.table_title21)
 
                 self.table21.setShowGrid(True) # Show grid
-                # Set the grid color
                 self.table21.setStyleSheet("QTableView { gridline-color: #343b47; }")
                 self.table21.resizeColumnsToContents() # Resize columns to contents
 
@@ -1156,22 +1159,38 @@ class Ui_MainWindow(object):
                 
         
         def show_in_map(self):
-                self.showInMapBtn.setStyleSheet("background-color: green;")
-                count = 0
                 for plane in self.planes:
-                        count += 1
-                        folium.Marker(location=[plane['lat'], plane['lon']], 
-                        popup=f"ID: {plane['plane_id']}",
-                        icon=folium.Icon(color='red', icon='plane', prefix='fa')
-                        ).add_to(self.m)
-                        if count == 5:
-                                break
+
+                        html = f"{plane['traffic_type']}<br>TA: {plane['plane_id']}<br>FL: {plane['FL']}"
+
+                        iframe = folium.IFrame(html,
+                        width=100,
+                        height=80)
+
+                        
+                        
+                        if plane['traffic_type']=='SMR':
+                                folium.Marker(location=[plane['lat'], plane['lon']], 
+                                popup=folium.Popup(plane['traffic_type'], width=70),
+                                icon=folium.Icon(color='red', icon='plane', prefix='fa')
+                                ).add_to(self.m)
+                        elif plane['traffic_type']=='MLAT':
+                                folium.Marker(location=[plane['lat'], plane['lon']], 
+                                popup=folium.Popup(iframe,max_width=300),
+                                icon=folium.Icon(color='green', icon='plane', prefix='fa')
+                                ).add_to(self.m)
+                        elif plane['traffic_type']=='ADS-B':
+                                folium.Marker(location=[plane['lat'], plane['lon']], 
+                                popup=folium.Popup(iframe,max_width=300),
+                                icon=folium.Icon(color='blue', icon='plane', prefix='fa')
+                                ).add_to(self.m)
                 # Save the Folium map as an HTML file
                 self.m.save(self.html_path)
 
                 # Load the HTML file in the QWebEngineView widget
                 self.webview.load(QUrl.fromLocalFile(self.html_path))
                 print(self.planes[0])
+                self.showInMapBtn.setStyleSheet("background-color: green;")
 
        
 
@@ -1240,10 +1259,10 @@ class Ui_MainWindow(object):
         #endif // QT_CONFIG(tooltip)
                 self.closeBtn.setText("")
                 # self.label_10.setText(QCoreApplication.translate("MainWindow", u"Home", None))
-                self.label_11.setText(QCoreApplication.translate("MainWindow", u"Map View", None))
+                
                 self.label_12.setText(QCoreApplication.translate("MainWindow", u"Reports", None))
-                # self.table_title21.setText(QCoreApplication.translate("MainWindow", u"CAT 21", None))
-                # self.table_title.setText(QCoreApplication.translate("MainWindow", u"CAT 10", None))
+                self.table_title21.setText(QCoreApplication.translate("MainWindow", u"CAT 21", None))
+                self.table_title.setText(QCoreApplication.translate("MainWindow", u"CAT 10", None))
                 self.label_7.setText(QCoreApplication.translate("MainWindow", u"Right Menu", None))
         #if QT_CONFIG(tooltip)
                 self.closeRightMenuBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close Menu", None))

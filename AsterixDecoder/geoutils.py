@@ -1,6 +1,9 @@
 import math
 import pyproj
 
+from geopy.point import Point
+from geopy.distance import distance
+
 def localCartesian2ECEF(easting,northing,up,ref_lon,ref_lat,ref_height):
     a = 6378137.0  # Earth's semi-major axis (meters)
     e = 0.0818191908426  # Earth's eccentricity
@@ -33,4 +36,23 @@ def ECEF2geodesic(x_ecef,y_ecef,z_ecef):
     lon, lat, height = ecef_to_wgs84.transform(x_ecef, y_ecef, z_ecef)
 
     return (lon,lat,height)
+
+
+def local_cartesian_to_geodetic(radar_lat_deg, radar_lat_min, radar_lat_sec, radar_lon_deg, radar_lon_min, radar_lon_sec, plane_x, plane_y, plane_z):
+    # Convert radar's geodetic coordinates to decimal degrees
+    radar_lat_decimal = radar_lat_deg + radar_lat_min / 60 + radar_lat_sec / 3600
+    radar_lon_decimal = radar_lon_deg + radar_lon_min / 60 + radar_lon_sec / 3600
+
+    # Create a Point object for the radar's geodetic coordinates
+    radar_point = Point(latitude=radar_lat_decimal, longitude=radar_lon_decimal)
+
+    # Calculate the plane's geodetic coordinates relative to the radar
+    plane_point = distance(meters=plane_x).destination(radar_point, plane_y)
+
+    # Extract the latitude, longitude, and altitude from the plane's geodetic coordinates
+    plane_lat = plane_point.latitude
+    plane_lon = plane_point.longitude
+    plane_alt = plane_z
+
+    return plane_lat, plane_lon, plane_alt
 
