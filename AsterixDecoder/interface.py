@@ -4,7 +4,7 @@ import geopandas as gpd
 import os
 import folium
 import pymap3d as pm
-
+import json
 from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
@@ -16,9 +16,11 @@ from Custom_Widgets.Widgets import QCustomStackedWidget
 import resources_rc
 
 from decoder import decode
+from geoutils import generateGeoJSON
 
 class Ui_MainWindow(object):
         def setupUi(self, MainWindow):
+                self.simulation_times = []
                 if not MainWindow.objectName():
                         MainWindow.setObjectName(u"MainWindow")
                         MainWindow.resize(990, 588)
@@ -612,6 +614,9 @@ class Ui_MainWindow(object):
 
                 # Create a Folium map
                 self.m = folium.Map(location=[self.bcn_airport_lat, self.bcn_airport_lon], zoom_start=12.5)
+                
+                # Create a feature group for markers
+                self.marker_group = folium.FeatureGroup(name='Markers')     
 
                 # Save the Folium map as an HTML file
                 self.m.save(self.html_path)
@@ -1043,6 +1048,7 @@ class Ui_MainWindow(object):
                                         'm': m
                                 }
                                 self.planes.append(self.plane)
+                                self.simulation_times.append(self.time)
                                
                                 
                         elif self.file.datablock_list[m].cat == 21:
@@ -1124,6 +1130,7 @@ class Ui_MainWindow(object):
                                         "FL": int(self.FL),
                                 }
                                 self.planes.append(self.plane)
+                                self.simulation_times.append(self.time)
                         else:
                                 row21 = row21 + 1
                                         
@@ -1229,6 +1236,12 @@ class Ui_MainWindow(object):
                 
         
         def show_in_map(self):
+                generateGEOJSON(self.planes)
+                
+                with open('data.geojson') as j:
+                        data = json.load(j)
+                
+                TimestampedGeoJson(data, transition_time=20)
                 for plane in self.planes:
 
                         html = f"{plane['traffic_type']}<br>TA: {plane['plane_id']}<br>FL: {plane['FL']}"
@@ -1236,24 +1249,25 @@ class Ui_MainWindow(object):
                         iframe = folium.IFrame(html,
                         width=100,
                         height=80)
-
-                        
                         
                         if plane['traffic_type']=='SMR':
-                                folium.Marker(location=[plane['lat'], plane['lon']], 
+                                self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
                                 popup=folium.Popup(plane['traffic_type'], width=70),
                                 icon=folium.Icon(color='red', icon='plane', prefix='fa')
-                                ).add_to(self.m)
+                                ))
+                                self.marker_group.add_to(self.m)
                         elif plane['traffic_type']=='MLAT':
-                                folium.Marker(location=[plane['lat'], plane['lon']], 
+                                self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
                                 popup=folium.Popup(iframe,max_width=300),
                                 icon=folium.Icon(color='green', icon='plane', prefix='fa')
-                                ).add_to(self.m)
+                                ))
+                                self.marker_group.add_to(self.m)
                         elif plane['traffic_type']=='ADS-B':
-                                folium.Marker(location=[plane['lat'], plane['lon']], 
+                                self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
                                 popup=folium.Popup(iframe,max_width=300),
                                 icon=folium.Icon(color='blue', icon='plane', prefix='fa')
-                                ).add_to(self.m)
+                                ))
+                                self.marker_group.add_to(self.m)
                 # Save the Folium map as an HTML file
                 self.m.save(self.html_path)
 
@@ -1264,8 +1278,10 @@ class Ui_MainWindow(object):
         
         def play_simulation(self):
                 # Timer
+        
                 self.timer = QTimer()
                 self.timer.setInterval(1000)
+                self.start_time = QTime.currentTime()
                 self.timer.timeout.connect(self.update_simulation)
                 self.timer.start(1000)
                 self.playBtn.setEnabled(False)
@@ -1296,36 +1312,42 @@ class Ui_MainWindow(object):
                 self.timeLabel.setText("Simulation is stopped...")
         
         def update_simulation(self):
-                self.current_time = QDateTime.currentDateTime()
-                self.timeLabel.setText("Simulation is running... Time: " + str(self.current_time.toString(Qt.ISODate)))
-                self.update_map()
+        
+                self.current_time = self.simulation_times[0] + self.start_time.elapsed()/1000 
+                if self.current_time < self.simulation_times[-1]:
+                        self.timeLabel.setText("Simulation is running... Time: " + str(self.current_time))
+                        self.update_map()
         
         def update_map(self):
-                # Clear map
-                self.m = folium.Map(location=[self.bcn_airport_lat, self.bcn_airport_lon], zoom_start=10)
+                # Clear markers
+                self.marker_group.clearLayers()
+                self.m.save(self.html_path)
                 self.webview.load(QUrl.fromLocalFile(self.html_path))
                 # Print in map markers for planes in current time
                 for plane in self.planes:
-                        if self.current_time < plane['time'] < self.current_time + 1:
+                        if  self.current_time -1 <= plane['time'] <= self.current_time:
                                 html = f"{plane['traffic_type']}<br>TA: {plane['plane_id']}<br>FL: {plane['FL']}"
                                 iframe = folium.IFrame(html,
                                 width=100,
                                 height=80)
                                 if plane['traffic_type']=='SMR':
-                                        folium.Marker(location=[plane['lat'], plane['lon']], 
+                                        self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
                                         popup=folium.Popup(plane['traffic_type'], width=70),
                                         icon=folium.Icon(color='red', icon='plane', prefix='fa')
-                                        ).add_to(self.m)
+                                        ))
+                                        self.marker_group.add_to(self.m)
                                 elif plane['traffic_type']=='MLAT':
-                                        folium.Marker(location=[plane['lat'], plane['lon']], 
+                                        self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
                                         popup=folium.Popup(iframe,max_width=300),
                                         icon=folium.Icon(color='green', icon='plane', prefix='fa')
-                                        ).add_to(self.m)
+                                        ))
+                                        self.marker_group.add_to(self.m)
                                 elif plane['traffic_type']=='ADS-B':
-                                        folium.Marker(location=[plane['lat'], plane['lon']], 
+                                        self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
                                         popup=folium.Popup(iframe,max_width=300),
                                         icon=folium.Icon(color='blue', icon='plane', prefix='fa')
-                                        ).add_to(self.m)
+                                        ))
+                                        self.marker_group.add_to(self.m)
                 # Save the Folium map as an HTML file
                 self.m.save(self.html_path)
                 # Load the HTML file in the QWebEngineView widget
