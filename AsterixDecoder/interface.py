@@ -16,7 +16,6 @@ from Custom_Widgets.Widgets import QCustomStackedWidget
 import resources_rc
 
 from decoder import decode
-from geoutils import *
 
 class Ui_MainWindow(object):
         def setupUi(self, MainWindow):
