@@ -504,8 +504,6 @@ class Ui_MainWindow(object):
                 self.mainPages.addWidget(self.page_6)
 
 
-                # SHOW IN MAP BUTTON
-
                 # Create a sub-layout to center the buttons
                 self.home_center_layout = QVBoxLayout()
                 self.home_center_layout.addWidget(self.openFileBtn)
@@ -526,6 +524,73 @@ class Ui_MainWindow(object):
                 self.page_7.setObjectName(u"page_7")
                 self.verticalLayout_17 = QVBoxLayout(self.page_7)
                 self.verticalLayout_17.setObjectName(u"verticalLayout_17")
+
+                self.playBtn = QPushButton(self.page_7)
+                self.playBtn.setFixedSize(QSize(30, 30))
+                self.playBtn.setIcon(QIcon('icons/play.svg'))
+                self.playBtn.setStyleSheet(
+                                                "QPushButton {"
+                                                "   background-color: #343b47;"
+                                                "}"
+                                                "QPushButton:hover {"
+                                                "   background-color: #2c313c;"
+                                                "}"
+                                                "QPushButton:pressed {"
+                                                "   background-color: #16191d;"
+                                                "}"
+                                        )
+
+                self.pauseBtn = QPushButton(self.page_7)
+                self.pauseBtn.setFixedSize(QSize(30, 30))
+                self.pauseBtn.setIcon(QIcon('icons/pause.svg'))
+                self.pauseBtn.setStyleSheet(
+                                                "QPushButton {"
+                                                "   background-color: #343b47;"
+                                                "}"
+                                                "QPushButton:hover {"
+                                                "   background-color: #2c313c;"
+                                                "}"
+                                                "QPushButton:pressed {"
+                                                "   background-color: #16191d;"
+                                                "}"
+                                        )
+                
+                self.stopBtn = QPushButton(self.page_7)
+                self.stopBtn.setFixedSize(QSize(30, 30))
+                self.stopBtn.setIcon(QIcon('icons/square.svg'))
+                self.stopBtn.setStyleSheet(
+                                                "QPushButton {"
+                                                "   background-color: #343b47;"
+                                                "}"
+                                                "QPushButton:hover {"
+                                                "   background-color: #2c313c;"
+                                                "}"
+                                                "QPushButton:pressed {"
+                                                "   background-color: #16191d;"
+                                                "}"
+                                        )
+                self.timeLabel = QLabel("Simulation Time", self.page_7)
+                self.timeLabel.setObjectName(u"timeLabel")
+                self.timeLabel.setFont(font)
+                self.timeLabel.setStyleSheet(
+                                                "QLabel {"
+                                                "   color: #838ea2;"
+                                                "}"
+                                        )
+
+                        
+
+                self.menu_layout = QHBoxLayout()
+                self.menu_layout.addWidget(self.playBtn)
+                self.menu_layout.addWidget(self.pauseBtn)
+                self.menu_layout.addWidget(self.stopBtn)
+                self.menu_layout.addStretch(1)
+                self.menu_layout.addWidget(self.timeLabel)
+                
+                self.verticalLayout_17.addLayout(self.menu_layout)
+                self.verticalLayout_17.setContentsMargins(0, 0, 0, 0)
+                self.verticalLayout_17.setSpacing(0)
+
                 
 
                 # Get the absolute path to the HTML file
@@ -551,7 +616,10 @@ class Ui_MainWindow(object):
 
                 # Create a QWebEngineView widget
                 self.webview = QWebEngineView(self.page_7)
+                self.webview.setMinimumSize(QSize(800, 600))
+                self.verticalLayout_17.addStretch(1)
                 self.verticalLayout_17.addWidget(self.webview)
+                self.verticalLayout_17.addStretch(1)
 
                 # Load the HTML file in the QWebEngineView widget
                 self.webview.load(QUrl.fromLocalFile(self.html_path))
@@ -738,7 +806,6 @@ class Ui_MainWindow(object):
                 self.sizeGrip.setMaximumSize(QSize(30, 30))
                 self.sizeGrip.setFrameShape(QFrame.StyledPanel)
                 self.sizeGrip.setFrameShadow(QFrame.Raised)
-
 
                 self.horizontalLayout_11.addWidget(self.sizeGrip)
 
@@ -1062,7 +1129,7 @@ class Ui_MainWindow(object):
                 
                 # CAT 10 TABLE
                 self.table_title = QLabel(self.page_8)
-                self.table_title.setObjectName(u"table_title")
+                self.table_title.setText("CAT 10")
                 self.table_title.setFont(QFont("Arial", 13, QFont.Bold))
                 self.table_title.setAlignment(Qt.AlignLeft)
                 self.verticalLayout_18.addWidget(self.table_title)
@@ -1109,12 +1176,13 @@ class Ui_MainWindow(object):
 
                 # CAT 21 TABLE
                 self.table_title21 = QLabel(self.page_8)
-                self.table_title21.setObjectName(u"table_title21")
+                self.table_title21.setText("CAT 21")
                 self.table_title21.setFont(QFont("Arial", 13, QFont.Bold))
                 self.table_title21.setAlignment(Qt.AlignLeft)
                 self.verticalLayout_18.addWidget(self.table_title21)
 
                 self.table21.setShowGrid(True) # Show grid
+                # Set the grid color
                 self.table21.setStyleSheet("QTableView { gridline-color: #343b47; }")
                 self.table21.resizeColumnsToContents() # Resize columns to contents
 
@@ -1261,8 +1329,6 @@ class Ui_MainWindow(object):
                 # self.label_10.setText(QCoreApplication.translate("MainWindow", u"Home", None))
                 
                 self.label_12.setText(QCoreApplication.translate("MainWindow", u"Reports", None))
-                self.table_title21.setText(QCoreApplication.translate("MainWindow", u"CAT 21", None))
-                self.table_title.setText(QCoreApplication.translate("MainWindow", u"CAT 10", None))
                 self.label_7.setText(QCoreApplication.translate("MainWindow", u"Right Menu", None))
         #if QT_CONFIG(tooltip)
                 self.closeRightMenuBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close Menu", None))
