@@ -18,6 +18,9 @@ import resources_rc
 from decoder import decode
 from geoutils import generateGeoJSON
 
+from ClassLibrary import utils as ut
+import math as math
+
 class Ui_MainWindow(object):
         def setupUi(self, MainWindow):
                 self.simulation_times = []
@@ -1078,7 +1081,17 @@ class Ui_MainWindow(object):
                                                 self.lat = dataitems_list[k].dataitem.decoded_data[0] # LATITUDE
                                                 self.lon = dataitems_list[k].dataitem.decoded_data[1] # LONGITUDE
                                         elif dataitems_list[k].FRN == 8 and dataitems_list[k].dataitem != None: # Time of Applicability for Velocity
-                                                self.table21.setItem(m, 9, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
+                                                hmins = ut.sec_to_hourminsec(dataitems_list[k].dataitem.decoded_data)
+                                                h = str(math.trunc(hmins[0]))
+                                                if len(h)==1:
+                                                        h = '0'+h
+                                                min = str(math.trunc(hmins[1]))
+                                                if len(min)==1:
+                                                        min = '0'+min
+                                                s = str(round(hmins[2],2))
+                                                if len(str(math.trunc(hmins[2]))) == 1:
+                                                        s = '0'+s
+                                                self.table21.setItem(m, 9, QTableWidgetItem(f'{h}:{min}:{s}'))
                                         elif dataitems_list[k].FRN == 9 and dataitems_list[k].dataitem != None: # Airspeed
                                                 self.table21.setItem(m, 10, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
                                         elif dataitems_list[k].FRN == 10 and dataitems_list[k].dataitem != None: # True Airspeed
@@ -1087,13 +1100,53 @@ class Ui_MainWindow(object):
                                                 self.table21.setItem(m, 12, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
                                                 self.plane_id = dataitems_list[k].dataitem.decoded_data # PLANE ID
                                         elif dataitems_list[k].FRN == 12 and dataitems_list[k].dataitem != None: # Time of Message Reception for Position
-                                                self.table21.setItem(m, 13, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
+                                                hmins = ut.sec_to_hourminsec(dataitems_list[k].dataitem.decoded_data)
+                                                h = str(math.trunc(hmins[0]))
+                                                if len(h)==1:
+                                                        h = '0'+h
+                                                min = str(math.trunc(hmins[1]))
+                                                if len(min)==1:
+                                                        min = '0'+min
+                                                s = str(round(hmins[2],2))
+                                                if len(str(math.trunc(hmins[2]))) == 1:
+                                                        s = '0'+s
+                                                self.table21.setItem(m, 13, QTableWidgetItem(f'{h}:{min}:{s}'))
                                         elif dataitems_list[k].FRN == 13 and dataitems_list[k].dataitem != None: # Time of Message Reception for Position, high precision
-                                                self.table21.setItem(m, 14, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
+                                                hmins = ut.sec_to_hourminsec(dataitems_list[k].dataitem.decoded_data)
+                                                h = str(math.trunc(hmins[0]))
+                                                if len(h)==1:
+                                                        h = '0'+h
+                                                min = str(math.trunc(hmins[1]))
+                                                if len(min)==1:
+                                                        min = '0'+min
+                                                s = str(round(hmins[2],2))
+                                                if len(str(math.trunc(hmins[2]))) == 1:
+                                                        s = '0'+s
+                                                self.table21.setItem(m, 14, QTableWidgetItem(f'{h}:{min}:{s}'))
                                         elif dataitems_list[k].FRN == 14 and dataitems_list[k].dataitem != None: # Time of Message Reception for Velocity
-                                                self.table21.setItem(m, 15, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
+                                                hmins = ut.sec_to_hourminsec(dataitems_list[k].dataitem.decoded_data)
+                                                h = str(math.trunc(hmins[0]))
+                                                if len(h)==1:
+                                                        h = '0'+h
+                                                min = str(math.trunc(hmins[1]))
+                                                if len(min)==1:
+                                                        min = '0'+min
+                                                s = str(round(hmins[2],2))
+                                                if len(str(math.trunc(hmins[2]))) == 1:
+                                                        s = '0'+s
+                                                self.table21.setItem(m, 15, QTableWidgetItem(f'{h}:{min}:{s}'))
                                         elif dataitems_list[k].FRN == 15 and dataitems_list[k].dataitem != None: # Time of Message Reception for Velocity, high precision
-                                                self.table21.setItem(m, 16, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
+                                                hmins = ut.sec_to_hourminsec(dataitems_list[k].dataitem.decoded_data)
+                                                h = str(math.trunc(hmins[0]))
+                                                if len(h)==1:
+                                                        h = '0'+h
+                                                min = str(math.trunc(hmins[1]))
+                                                if len(min)==1:
+                                                        min = '0'+min
+                                                s = str(round(hmins[2],2))
+                                                if len(str(math.trunc(hmins[2]))) == 1:
+                                                        s = '0'+s
+                                                self.table21.setItem(m, 16, QTableWidgetItem(f'{h}:{min}:{s}'))
                                         elif dataitems_list[k].FRN == 16 and dataitems_list[k].dataitem != None: # Geometric Height
                                                 self.table21.setItem(m, 17, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
                                         elif dataitems_list[k].FRN == 17 and dataitems_list[k].dataitem != None: # Quality Indicators
@@ -1120,7 +1173,17 @@ class Ui_MainWindow(object):
                                         elif dataitems_list[k].FRN == 27 and dataitems_list[k].dataitem != None: # Track Angle Rate
                                                 self.table21.setItem(m, 28, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
                                         elif dataitems_list[k].FRN == 28 and dataitems_list[k].dataitem != None: # Time of Report Transmission for Position
-                                                self.table21.setItem(m, 29, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
+                                                hmins = ut.sec_to_hourminsec(dataitems_list[k].dataitem.decoded_data)
+                                                h = str(math.trunc(hmins[0]))
+                                                if len(h)==1:
+                                                        h = '0'+h
+                                                min = str(math.trunc(hmins[1]))
+                                                if len(min)==1:
+                                                        min = '0'+min
+                                                s = str(round(hmins[2],2))
+                                                if len(str(math.trunc(hmins[2]))) == 1:
+                                                        s = '0'+s
+                                                self.table21.setItem(m, 29, QTableWidgetItem(f'{h}:{min}:{s}'))
                                                 self.time = dataitems_list[k].dataitem.decoded_data # TIME
                                         k=k+1
                                 self.plane = {
