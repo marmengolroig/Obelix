@@ -1,33 +1,21 @@
 import json
 import datetime
 
-def generateGeoJSON(planes):
-    
-    features = []
-
-    for plane_data in planes:
-        feature = {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [plane_data["lon"], plane_data["lat"]]
-            },
-            "properties": {
-                "time": convert_time(plane_data["time"]),
-                "plane_id": plane_data["plane_id"],
-                "traffic_type": plane_data["traffic_type"],
-                "FL": plane_data["FL"]
-            }
+def generateGeoJSON(plane_data):
+    feature = {
+        "type": "Feature",
+        "geometry": {
+            "type": "Point",
+            "coordinates": [plane_data["lon"], plane_data["lat"]]
+        },
+        "properties": {
+            "time": convert_time(plane_data["time"]),
+            "plane_id": plane_data["plane_id"],
+            "tooltip": f'{plane_data["traffic_type"]}\n ID: {plane_data["plane_id"]} \n FL: {plane_data["FL"]}',
+            "FL": plane_data["FL"]
         }
-    features.append(feature)
-    
-    geojson_data = {
-    "type": "FeatureCollection",
-    "features": features
-}
-
-    with open("data.geojson", "w") as f:
-        json.dump(geojson_data, f)
+    }
+    return feature
         
 def convert_time(seconds):
     current_datetime = datetime.datetime.now()

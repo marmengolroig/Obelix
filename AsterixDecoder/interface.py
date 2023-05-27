@@ -3,6 +3,7 @@ sys.path.append("..")
 import geopandas as gpd
 import os
 import folium
+from folium import plugins
 import pymap3d as pm
 import json
 from PySide2.QtCore import *
@@ -17,6 +18,39 @@ import resources_rc
 
 from decoder import decode
 from geoutils import generateGeoJSON
+
+import numpy as np
+import pandas as pd
+import geopandas as gpd
+import folium
+import datetime
+import os
+
+def create_geojson_features(df):
+        features = []
+        
+        for _, row in df.iterrows():
+                feature = {
+                        'type': 'Feature',
+                        'geometry': {
+                        'type':'Point', 
+                        'coordinates':[row['lon'],row['lat']]
+                        },
+                        'properties': {
+                        'time': pd.to_datetime(row['hour'], unit='h').__str__(),
+                        'style': {'color' : ''},
+                        'icon': 'circle',
+                        'iconstyle':{
+                                'fillColor': row['fillColor'],
+                                'fillOpacity': 0.8,
+                                'stroke': 'true',
+                                'radius': row['count'] + 5
+                        }
+                        }
+                }
+        features.append(feature)
+        return features
+
 
 class Ui_MainWindow(object):
         def setupUi(self, MainWindow):
@@ -613,25 +647,28 @@ class Ui_MainWindow(object):
                 bcn_airport = airports[airports['iata_code'] == 'BCN']
                 self.bcn_airport_lat = bcn_airport['geometry'].y.iloc[0]
                 self.bcn_airport_lon = bcn_airport['geometry'].x.iloc[0]
-
+                # AQUIIIIIIII#####################################################################################
+                               
                 # Create a Folium map
-                self.m = folium.Map(location=[self.bcn_airport_lat, self.bcn_airport_lon], zoom_start=12.5)
+                # self.m = folium.Map(location=[self.bcn_airport_lat, self.bcn_airport_lon], zoom_start=12.5)
                 
                 # Create a feature group for markers
-                self.marker_group = folium.FeatureGroup(name='Markers')     
+                # self.marker_group = folium.FeatureGroup(name='Markers')     
 
                 # Save the Folium map as an HTML file
-                self.m.save(self.empty_html_path)
+                # self.m.save(self.empty_html_path)
+                # AQUIIIIIIII#####################################################################################
 
-                # Create a QWebEngineView widget
-                self.webview = QWebEngineView(self.page_7)
-                self.webview.setMinimumSize(QSize(800, 600))
-                self.verticalLayout_17.addStretch(1)
-                self.verticalLayout_17.addWidget(self.webview)
-                self.verticalLayout_17.addStretch(1)
+                # # Create a QWebEngineView widget
+                # self.marker_group = folium.FeatureGroup(name='Markers')     
+                # self.webview = QWebEngineView(self.page_7)
+                # self.webview.setMinimumSize(QSize(800, 600))
+                # self.verticalLayout_17.addStretch(1)
+                # self.verticalLayout_17.addWidget(self.webview)
+                # self.verticalLayout_17.addStretch(1)
 
-                # Load the HTML file in the QWebEngineView widget
-                self.webview.load(QUrl.fromLocalFile(self.empty_html_path))
+                # # Load the HTML file in the QWebEngineView widget
+                # self.webview.load(QUrl.fromLocalFile(self.empty_html_path))
 
                 # Start the timer to update plane positions
                 #self.timer = QTimer()
@@ -835,6 +872,9 @@ class Ui_MainWindow(object):
 
                 QMetaObject.connectSlotsByName(MainWindow)
         # setupUi
+        
+        # GEOJSONNNNNNN##############################################################################################################
+
 
         # Function to handle button click event
         def open_file_dialog(self):
@@ -959,8 +999,8 @@ class Ui_MainWindow(object):
                 m=0
                 row = 1
                 row21 = 1
-                while m<1000:
-                #while m<len(self.file.datablock_list):
+                # while m<100:
+                while m<len(self.file.datablock_list):
                         dataitems_list = self.file.datablock_list[m].record.dataitems_list
                         if self.file.datablock_list[m].cat == 10:
                                 self.table.setRowCount(row)
@@ -1052,7 +1092,7 @@ class Ui_MainWindow(object):
                                 self.planes.append(self.plane)
                                 self.simulation_times.append(self.time)
                                
-                                
+                        
                         elif self.file.datablock_list[m].cat == 21:
                                 self.traffic_type = 'ADS-B'
                                 self.table21.setRowCount(row21)
@@ -1137,6 +1177,7 @@ class Ui_MainWindow(object):
                                 row21 = row21 + 1
                                         
                         m=m+1
+                
                 
                 # CAT 10 TABLE
                 self.table_title = QLabel(self.page_8)
@@ -1238,38 +1279,70 @@ class Ui_MainWindow(object):
                 
         
         def show_in_map(self):
+               
+                features = []
+                self.m = folium.Map(location=[self.bcn_airport_lat, self.bcn_airport_lon], zoom_start=12.5)
+                
+                # Create a QWebEngineView widget
+                self.marker_group = folium.FeatureGroup(name='Markers')     
+                
+                
                 for plane in self.planes:
-
-                        html = f"{plane['traffic_type']}<br>TA: {plane['plane_id']}<br>FL: {plane['FL']}"
-
-                        iframe = folium.IFrame(html,
-                        width=100,
-                        height=80)
+                        feature = generateGeoJSON(plane)
+                        features.append(feature)
+                        # html = f"{plane['traffic_type']}<br>TA: {plane['plane_id']}<br>FL: {plane['FL']}"
+                        # iframe = folium.IFrame(html,
+                        # width=100,
+                        # height=80)
                         
-                        if plane['traffic_type']=='SMR':
-                                self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
-                                popup=folium.Popup(plane['traffic_type'], width=70),
-                                icon=folium.Icon(color='red', icon='plane', prefix='fa')
-                                ))
-                                self.marker_group.add_to(self.m)
-                        elif plane['traffic_type']=='MLAT':
-                                self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
-                                popup=folium.Popup(iframe,max_width=300),
-                                icon=folium.Icon(color='green', icon='plane', prefix='fa')
-                                ))
-                                self.marker_group.add_to(self.m)
-                        elif plane['traffic_type']=='ADS-B':
-                                self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
-                                popup=folium.Popup(iframe,max_width=300),
-                                icon=folium.Icon(color='blue', icon='plane', prefix='fa')
-                                ))
-                                self.marker_group.add_to(self.m)
+                        # if plane['traffic_type']=='SMR':
+                        #         self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
+                        #         popup=folium.Popup(plane['traffic_type'], width=70),
+                        #         icon=folium.Icon(color='red', icon='plane', prefix='fa')
+                        #         ))
+                        #         self.marker_group.add_to(self.m)
+                        # elif plane['traffic_type']=='MLAT':
+                        #         self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
+                        #         popup=folium.Popup(iframe,max_width=300),
+                        #         icon=folium.Icon(color='green', icon='plane', prefix='fa')
+                        #         ))
+                        #         self.marker_group.add_to(self.m)
+                        # elif plane['traffic_type']=='ADS-B':
+                        #         self.marker_group.add_child(folium.Marker(location=[plane['lat'], plane['lon']], 
+                        #         popup=folium.Popup(iframe,max_width=300),
+                        #         icon=folium.Icon(color='blue', icon='plane', prefix='fa')
+                        #         ))
+                        #         self.marker_group.add_to(self.m)
+                                
+                geojson_data = {
+                "type": "FeatureCollection",
+                "features": features
+                }
+                
+                with open("data.geojson", "w") as f:
+                        json.dump(geojson_data, f)
+                        
+                with open('data.geojson') as j:
+                        data = json.load(j)
+
+                plugins.TimestampedGeoJson(data,
+                period="PT1S",
+                add_last_point=True,
+                min_speed=1,
+                max_speed=100,
+                ).add_to(self.m)
+                
                 # Save the Folium map as an HTML file
                 self.m.save(self.full_html_path)
 
+                self.webview = QWebEngineView(self.page_7)
+                self.webview.setMinimumSize(QSize(800, 600))
+                self.verticalLayout_17.addStretch(1)
+                self.verticalLayout_17.addWidget(self.webview)
+                self.verticalLayout_17.addStretch(1)
+
                 # Load the HTML file in the QWebEngineView widget
                 self.webview.load(QUrl.fromLocalFile(self.full_html_path))
-                print(self.planes[0])
                 self.showInMapBtn.setStyleSheet("background-color: green;")
         
         def play_simulation(self):
