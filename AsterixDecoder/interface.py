@@ -821,41 +821,31 @@ class Ui_MainWindow(object):
 
         # Function to handle button click event     
         def fill_tables(self):
-                self.time = 0
-                self.x = 0
-                self.y = 0
-                self.z = 0
-                self.FL = 0
-                self.plane_id = ""
-                self.traffic_type = ""
-                
-
                 self.table.setObjectName(u"table")
                 self.table21.setObjectName(u"table21")
 
                 self.table.setColumnCount(27)
-                
-
                 self.table21.setColumnCount(30)
-                
 
-                self.table.setHorizontalHeaderLabels(["Category", 
+                self.table.setHorizontalHeaderLabels([
+                                                "Category", 
                                                 "SAC", 
-                                                "SIC",
+                                                "SIC", 
                                                 "Message Type", 
                                                 "Target Report Descriptor", 
-                                                "Time of Day", 
-                                                "Position in WGS-84 coordinates", 
-                                                "Position in polar coordinates", 
-                                                "Position in Cartesian coordinates", 
-                                                "Calculated Track Velocity in polar coordinates", 
-                                                "Calculated Track Velocity in Cartesian coordinates", 
-                                                "Track Number", 
-                                                "Track Status", 
-                                                "Mode-3/A Code in Octal Representation", 
-                                                "Target Address", 
-                                                "Target Identification", 
-                                                "Mode-S MB Data", 
+                                                "Time of Day",
+                                                "Position in WGS-84",
+                                                "Position in Polar",
+                                                "Position in Cartesian",
+                                                "Calculated Track Velocity in Polar",
+                                                "Calculated Track Velocity in Cartesian",
+                                                "Track Number",
+                                                "Track Status",
+                                                "Mode-3/A Code in Octal Representation",
+                                                "Measured Height",
+                                                "Target Address",
+                                                "Target Identification",
+                                                "Mode-S MB Data",
                                                 "Vehicle Fleet Identification", 
                                                 "Flight Level in Binary Representation", 
                                                 "Measured Height", 
@@ -865,12 +855,12 @@ class Ui_MainWindow(object):
                                                 "Standard Deviation of Position", 
                                                 "Presence", 
                                                 "Amplitude of Primary Plot", 
-                                                "Calculated Acceleration" ])
-
-                self.table21.setHorizontalHeaderLabels(["Category",
-                                                        "SAC",
-                                                        "SIC",
-                                                        "Target Report Descriptor",
+                                                "Calculated Acceleration"])
+                
+                self.table21.setHorizontalHeaderLabels(["Category", 
+                                                        "SAC", 
+                                                        "SIC", 
+                                                        "Target Report Descriptor", 
                                                         "Track Number",
                                                         "Service Identification",
                                                         "Time of Applicability for Position",
@@ -896,92 +886,126 @@ class Ui_MainWindow(object):
                                                         "Geometric Vertical Rate",
                                                         "Airborne Ground Vector",
                                                         "Track Angle Rate",
-                                                        "Time of Report Transmission for Position",])
-                m=0
-                row = 1
-                row21 = 1
-                # while m<100:
-                while m<len(self.file.datablock_list):
-                        dataitems_list = self.file.datablock_list[m].record.dataitems_list
-                        if self.file.datablock_list[m].cat == 10:
-                                self.table.setRowCount(row)
-                                row = row + 1
-                                n=0
-                                while n<len(dataitems_list):
-                                        self.table.setItem(m, 0, QTableWidgetItem(f'{self.file.datablock_list[m].cat}')) # Category
-                                        if dataitems_list[n].FRN == 1 and dataitems_list[n].dataitem != None: # SAC/SIC
-                                                SAC = dataitems_list[n].dataitem.decoded_data[0]
-                                                SIC = dataitems_list[n].dataitem.decoded_data[1]
-                                                self.table.setItem(m, 1, QTableWidgetItem(f'{SAC}'))
-                                                self.table.setItem(m, 2, QTableWidgetItem(f'{SIC}'))
+                                                        "Time of Report Transmission for Position"])
+
+                data_table = []
+                data_table21 = []
+
+                # Set default values for variables used in the loop
+                SAC = SIC = lat0 = lon0 = h0 = x = y = None
+
+                self.planes = []
+                self.plane_id = 0
+                self.time = 0
+                self.traffic_type = ""
+                self.FL = 0
+                
+                # Dictionary mapping FRN values to indices in row
+                frn_indices = {
+                1: (1, 2), 2: (3,), 3: (4,), 4: (5,), 5: (6,), 6: (7,), 7: (8,), 8: (9,),
+                9: (10,), 10: (11,), 11: (12,), 12: (13,), 13: (14,), 14: (15,), 15: (16,),
+                16: (17,), 17: (18,), 18: (19,), 19: (20,), 20: (21,), 21: (22,), 22: (23,),
+                23: (24,), 24: (25,), 25: (26,), 26: (27,)}
+                
+                # Dictionary mapping FRN values to indices in row21
+                frn_indices21 = {
+                1: (1, 2), 2: (3,), 3: (4,), 4: (5,), 5: (6,), 6: (7,), 7: (8,), 8: (9,),
+                9: (10,), 10: (11,), 11: (12,), 12: (13,), 13: (14,), 14: (15,), 15: (16,),
+                16: (17,), 17: (18,), 18: (19,), 19: (20,), 20: (21,), 21: (22,), 22: (23,),
+                23: (24,), 24: (25,), 25: (26,), 26: (27,), 27: (28,), 28: (29,), 29: (30,)}
+              
+
+                for m, datablock in enumerate(self.file.datablock_list):
+                        dataitems_list = datablock.record.dataitems_list
+                        
+
+                        if datablock.cat == 10:
+                                row = [f'{datablock.cat}'] + [''] * 27
+
+
+                                for n, dataitem in enumerate(dataitems_list):
+                                        # Store frequently accessed values in local variables
+                                        decoded_data = dataitem.dataitem.decoded_data if dataitem.dataitem else None
+                                        FRN = dataitem.FRN if dataitem.dataitem else None
+                                        
+                                        # Initialize indices outside the loop
+                                        indices = frn_indices.get(FRN, ())
+                                        
+                                        if FRN == 1 and decoded_data is not None:  # SAC/SIC
+                                                SAC = decoded_data[0]
+                                                SIC = decoded_data[1]
+                                                row[1], row[2] = str(SAC), str(SIC)
+
                                                 if SIC == 7:
                                                         self.traffic_type = 'SMR'
-                                                        lat0=41.295556
-                                                        lon0=2.095
-                                                        h0=0
+                                                        lat0, lon0, h0 = 41.295556, 2.095, 0
                                                 elif SIC == 107:
                                                         self.traffic_type = 'MLAT'
-                                                        lat0=41.296944
-                                                        lon0=2.078333
-                                                        h0=0
-                                                
-                                        elif dataitems_list[n].FRN == 2 and dataitems_list[n].dataitem != None: # Message Type
-                                                self.table.setItem(m, 3, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 3 and dataitems_list[n].dataitem != None: # Target Report Descriptor
-                                                self.table.setItem(m, 4, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 4 and dataitems_list[n].dataitem != None: # Time of Day
-                                                self.table.setItem(m, 5, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                                self.time = dataitems_list[n].dataitem.decoded_data # TIME
-                                        elif dataitems_list[n].FRN == 5 and dataitems_list[n].dataitem != None: # Position in WGS-84 coordinates
-                                                self.table.setItem(m, 6, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 6 and dataitems_list[n].dataitem != None: # Position in polar coordinates
-                                                self.table.setItem(m, 7, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 7 and dataitems_list[n].dataitem != None: # Position in Cartesian coordinates
-                                                self.table.setItem(m, 8, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                                self.x = dataitems_list[n].dataitem.decoded_data[0] # X
-                                                self.y = dataitems_list[n].dataitem.decoded_data[1] # Y
-                                        elif dataitems_list[n].FRN == 8 and dataitems_list[n].dataitem != None: # Calculated Track Velocity in polar coordinates
-                                                self.table.setItem(m, 9, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 9 and dataitems_list[n].dataitem != None: # Calculated Track Velocity in Cartesian coordinates
-                                                self.table.setItem(m, 10, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 10 and dataitems_list[n].dataitem != None: # Track Number
-                                                self.table.setItem(m, 11, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 11 and dataitems_list[n].dataitem != None: # Track Status
-                                                self.table.setItem(m, 12, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 12 and dataitems_list[n].dataitem != None: # Mode-3/A Code in Octal Representation
-                                                self.table.setItem(m, 13, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 13 and dataitems_list[n].dataitem != None: # Target Address
-                                                self.table.setItem(m, 14, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                                self.plane_id = dataitems_list[n].dataitem.decoded_data # PLANE ID
-                                        elif dataitems_list[n].FRN == 14 and dataitems_list[n].dataitem != None: # Target Identification
-                                                self.table.setItem(m, 15, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 15 and dataitems_list[n].dataitem != None: # Mode-S MB Data
-                                                self.table.setItem(m, 16, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 16 and dataitems_list[n].dataitem != None: # Vehicle Fleet Identification
-                                                self.table.setItem(m, 17, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 17 and dataitems_list[n].dataitem != None: # Flight Level in Binary Representation
-                                                self.table.setItem(m, 18, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                                self.FL = dataitems_list[n].dataitem.decoded_data[2] # FL
-                                        elif dataitems_list[n].FRN == 18 and dataitems_list[n].dataitem != None: # Measured Height
-                                                self.table.setItem(m, 19, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 19 and dataitems_list[n].dataitem != None: # Target Size & Orientation
-                                                self.table.setItem(m, 20, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 20 and dataitems_list[n].dataitem != None: # System Status
-                                                self.table.setItem(m, 21, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 21 and dataitems_list[n].dataitem != None: # Pre-programmed Message
-                                                self.table.setItem(m, 22, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 22 and dataitems_list[n].dataitem != None: # Standard Deviation of Position
-                                                self.table.setItem(m, 23, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 23 and dataitems_list[n].dataitem != None: # Presence
-                                                self.table.setItem(m, 24, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 24 and dataitems_list[n].dataitem != None: # Amplitude of Primary Plot
-                                                self.table.setItem(m, 25, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}'))
-                                        elif dataitems_list[n].FRN == 25 and dataitems_list[n].dataitem != None: # Calculated Acceleration
-                                                self.table.setItem(m, 26, QTableWidgetItem(f'{dataitems_list[n].dataitem.decoded_data}')) 
+                                                        lat0, lon0, h0 = 41.296944, 2.078333, 0
+                                        else:
+                                                for index in indices:
+                                                        if decoded_data is not None:
+                                                                row[index] = str(decoded_data)
                                         
-                                        n=n+1
-                                lat, lon, alt = pm.enu2geodetic(self.x, self.y, 0, lat0, lon0, h0, ell = pm.Ellipsoid.from_name('wgs84'), deg=True)
-                                self.plane = {
+                                        # Update other variables based on FRN
+                                        if FRN == 7 and decoded_data is not None:
+                                                x, y = decoded_data[0], decoded_data[1]
+                                        elif FRN == 10 and decoded_data is not None:
+                                                self.plane_id = decoded_data
+                                        elif FRN == 19 and decoded_data is not None:
+                                                self.FL = decoded_data[0]
+                                        elif FRN == 4 and decoded_data is not None:
+                                                self.time = decoded_data                                               
+                                        
+
+                                self.planes.append({
+                                        'plane_id': self.plane_id,
+                                        'time': self.time,
+                                        'lat': None,
+                                        'lon': None,
+                                        'traffic_type': self.traffic_type,
+                                        'FL': int(self.FL),
+                                        'm': m
+                                })
+
+                                if len(self.planes) > 0:
+                                        self.planes[-1]['lat'], self.planes[-1]['lon'], _ = pm.enu2geodetic(
+                                        x, y, 0, lat0, lon0, h0, ell=pm.Ellipsoid.from_name('wgs84'), deg=True
+                                        )
+
+                                data_table.append(row)
+
+                        elif datablock.cat == 21:
+                                self.traffic_type = 'ADS-B'
+                                row21 = [f'{datablock.cat}'] + [''] * 30
+
+                                for k, dataitem in enumerate(dataitems_list):
+                                        # Store frequently accessed values in local variables
+                                        decoded_data = dataitem.dataitem.decoded_data if dataitem.dataitem else None
+                                        FRN = dataitem.FRN if dataitem.dataitem else None
+                                        
+                                        # Initialize indices outside the loop
+                                        indices = frn_indices21.get(FRN, ())
+                                        
+                                        if FRN == 1 and decoded_data is not None:  # SAC/SIC
+                                                SAC = decoded_data[0]
+                                                SIC = decoded_data[1]
+                                                row21[1], row21[2] = str(SAC), str(SIC)
+                                        else:
+                                                for index in indices:
+                                                        if decoded_data is not None:
+                                                                row21[index] = str(decoded_data)
+                                        # Update other variables based on FRN
+                                        if FRN == 7 and decoded_data is not None:
+                                                lat, lon = decoded_data[0], decoded_data[1]
+                                        elif FRN == 11 and decoded_data is not None:
+                                                self.plane_id = decoded_data
+                                        elif FRN == 21 and decoded_data is not None:
+                                                self.FL = decoded_data
+                                        elif FRN == 28 and decoded_data is not None:
+                                                self.time = decoded_data   
+
+                                self.planes.append({
                                         'plane_id': self.plane_id,
                                         'time': self.time,
                                         'lat': lat,
@@ -989,95 +1013,21 @@ class Ui_MainWindow(object):
                                         'traffic_type': self.traffic_type,
                                         'FL': int(self.FL),
                                         'm': m
-                                }
-                                self.planes.append(self.plane)
-                                self.simulation_times.append(self.time)
-                               
-                        
-                        elif self.file.datablock_list[m].cat == 21:
-                                self.traffic_type = 'ADS-B'
-                                self.table21.setRowCount(row21)
-                                row21 = row21 + 1
-                                k=0
-                                while k<len(dataitems_list):
-                                        self.table21.setItem(m, 0, QTableWidgetItem(f'{self.file.datablock_list[m].cat}')) # Category
-                                        if dataitems_list[k].FRN == 1 and dataitems_list[k].dataitem != None: # SAC/SIC
-                                                self.table21.setItem(m, 1, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data[0]}'))
-                                                self.table21.setItem(m, 2, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data[1]}'))
-                                        elif dataitems_list[k].FRN == 2 and dataitems_list[k].dataitem != None: # Target Report Descriptor
-                                                self.table21.setItem(m, 3, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 3 and dataitems_list[k].dataitem != None: # Track Number
-                                                self.table21.setItem(m, 4, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 4 and dataitems_list[k].dataitem != None: # Service Identificator
-                                                self.table21.setItem(m, 5, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 5 and dataitems_list[k].dataitem != None: # Time of Applicability for Position
-                                                self.table21.setItem(m, 6, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 6 and dataitems_list[k].dataitem != None: # Position in WGS-84 coordinates
-                                                self.table21.setItem(m, 7, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 7 and dataitems_list[k].dataitem != None: # Position in WGS-84, high res.
-                                                self.table21.setItem(m, 8, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                                self.lat = dataitems_list[k].dataitem.decoded_data[0] # LATITUDE
-                                                self.lon = dataitems_list[k].dataitem.decoded_data[1] # LONGITUDE
-                                        elif dataitems_list[k].FRN == 8 and dataitems_list[k].dataitem != None: # Time of Applicability for Velocity
-                                                self.table21.setItem(m, 9, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 9 and dataitems_list[k].dataitem != None: # Airspeed
-                                                self.table21.setItem(m, 10, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 10 and dataitems_list[k].dataitem != None: # True Airspeed
-                                                self.table21.setItem(m, 11, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 11 and dataitems_list[k].dataitem != None: # Target Address
-                                                self.table21.setItem(m, 12, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                                self.plane_id = dataitems_list[k].dataitem.decoded_data # PLANE ID
-                                        elif dataitems_list[k].FRN == 12 and dataitems_list[k].dataitem != None: # Time of Message Reception for Position
-                                                self.table21.setItem(m, 13, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 13 and dataitems_list[k].dataitem != None: # Time of Message Reception for Position, high precision
-                                                self.table21.setItem(m, 14, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 14 and dataitems_list[k].dataitem != None: # Time of Message Reception for Velocity
-                                                self.table21.setItem(m, 15, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 15 and dataitems_list[k].dataitem != None: # Time of Message Reception for Velocity, high precision
-                                                self.table21.setItem(m, 16, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 16 and dataitems_list[k].dataitem != None: # Geometric Height
-                                                self.table21.setItem(m, 17, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 17 and dataitems_list[k].dataitem != None: # Quality Indicators
-                                                self.table21.setItem(m, 18, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 18 and dataitems_list[k].dataitem != None: # MOPS Version
-                                                self.table21.setItem(m, 19, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 19 and dataitems_list[k].dataitem != None: # Mode-3/A Code in Octal Representation
-                                                self.table21.setItem(m, 20, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 20 and dataitems_list[k].dataitem != None: # Roll Angle
-                                                self.table21.setItem(m, 21, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 21 and dataitems_list[k].dataitem != None: # Flight Level in Binary Representation
-                                                self.table21.setItem(m, 22, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                                self.FL = dataitems_list[k].dataitem.decoded_data # FL
-                                        elif dataitems_list[k].FRN == 22 and dataitems_list[k].dataitem != None: # Magnetic Heading
-                                                self.table21.setItem(m, 23, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 23 and dataitems_list[k].dataitem != None: # Target Status
-                                                self.table21.setItem(m, 24, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 24 and dataitems_list[k].dataitem != None: # Barometric Vertical Rate
-                                                self.table21.setItem(m, 25, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 25 and dataitems_list[k].dataitem != None: # Geometric Vertical Rate
-                                                self.table21.setItem(m, 26, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 26 and dataitems_list[k].dataitem != None: # Airborne Ground Vector
-                                                self.table21.setItem(m, 27, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 27 and dataitems_list[k].dataitem != None: # Track Angle Rate
-                                                self.table21.setItem(m, 28, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                        elif dataitems_list[k].FRN == 28 and dataitems_list[k].dataitem != None: # Time of Report Transmission for Position
-                                                self.table21.setItem(m, 29, QTableWidgetItem(f'{dataitems_list[k].dataitem.decoded_data}'))
-                                                self.time = dataitems_list[k].dataitem.decoded_data # TIME
-                                        k=k+1
-                                self.plane = {
-                                        "plane_id": self.plane_id,
-                                        "time": self.time,
-                                        "lat": self.lat,
-                                        "lon": self.lon,
-                                        "traffic_type": self.traffic_type,
-                                        "FL": int(self.FL),
-                                }
-                                self.planes.append(self.plane)
-                                self.simulation_times.append(self.time)
-                        else:
-                                row21 = row21 + 1
-                                        
-                        m=m+1
+                                })
+
+                                data_table21.append(row21)
+
+                self.table.setRowCount(len(data_table))
+                self.table21.setRowCount(len(data_table21))
+
+                for i, row_data in enumerate(data_table):
+                        for j, value in enumerate(row_data):
+                                self.table.setItem(i, j, QTableWidgetItem(value))
+
+                for i, row_data in enumerate(data_table21):
+                        for j, value in enumerate(row_data):
+                                self.table21.setItem(i, j, QTableWidgetItem(value))
+
                 
                 
                 # CAT 10 TABLE
