@@ -35,14 +35,14 @@ def concatenate_decimals_in_binary(decimal_list):
     return concatenated_binary
 
 def read_in_twos_complement(binary):
-        # Check if the number is negative (sign bit is 1)
-    if binary[0] == '1':
-        # Perform two's complement conversion
-        inverted_bits = ''.join('1' if bit == '0' else '0' for bit in binary)
-        decimal_number = -(int(inverted_bits, 2) + 1)
+    if binary:
+        if binary[0] == '1':
+            complement = ''.join('1' if bit == '0' else '0' for bit in binary)
+            return -int(complement, 2) - 1
+        else:
+            return int(binary, 2)
     else:
-        decimal_number = int(binary, 2)
-    return decimal_number
+        return 0
 
 def read_character(binary):
     if binary == '000001':

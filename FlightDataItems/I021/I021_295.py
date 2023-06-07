@@ -40,7 +40,7 @@ class I021_295():
     
     def set_data(self):
         return self.parent.data_list[0:self.parent.long]
-    
+        
     def decode_data(self):
         primary_long = 0
         for decimal in self.parent.data_list[0:4]:
@@ -54,8 +54,9 @@ class I021_295():
         while i < len(self.subfield_list):
             if self.subfield_list[i] == 1:
                 subfield = binary[j:j+8]
-                self.subfield_list[i] = int(subfield, 2)*0.1
-                j+=8
-            i+=1
+                if subfield:
+                    self.subfield_list[i] = int(subfield, 2) * 0.1
+                    j += 8
+            i += 1
 
         return self.subfield_list

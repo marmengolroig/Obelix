@@ -47,64 +47,38 @@ class DataItemCat21:
         return self.long
 
     def create_dataitem(self):
-        if self.FRN == 1:
-            return I021_010(self)
-        elif self.FRN == 2:
-            return I021_040(self)
-        elif self.FRN == 3:
-            return I021_161(self)
-        elif self.FRN == 4:
-            return I021_015(self)
-        elif self.FRN == 5:
-            return I021_071(self)
-        elif self.FRN == 6:
-            return I021_130(self)
-        elif self.FRN == 7:
-            return I021_131(self)
-        elif self.FRN == 11:
-            return I021_080(self)
-        elif self.FRN == 12:
-            return I021_073(self)
-        elif self.FRN == 14:
-            return I021_075(self)
-        elif self.FRN == 16:
-            return I021_140(self)
-        elif self.FRN == 17:
-            return I021_090(self)
-        elif self.FRN == 18:
-            return I021_210(self)
-        elif self.FRN == 19:
-            return I021_070(self)
-        elif self.FRN == 21:
-            return I021_145(self)
-        elif self.FRN == 23:
-            return I021_200(self)
-        elif self.FRN == 24:
-            return I021_155(self)
-        elif self.FRN == 26:
-            return I021_160(self)
-        elif self.FRN == 28:
-            return I021_077(self)
-        elif self.FRN == 29:
-            return I021_170(self)
-        elif self.FRN == 30:
-            return I021_020(self)
-        elif self.FRN == 32:
-            return I021_146(self)
-        elif self.FRN == 35:
-            return I021_016(self)
-        elif self.FRN == 36:
-            return I021_008(self)
-        elif self.FRN == 37:
-            return I021_271(self)
-        elif self.FRN == 38:
-            return I021_132(self)
-        elif self.FRN == 41:
-            return I021_400(self)
-        elif self.FRN == 42:
-            return I021_295(self)
-        elif self.FRN == 48:
-            return I021_RE(self)
+        data_item_map = {
+            1: I021_010(self),
+            2: I021_040(self),
+            3: I021_161(self),
+            4: I021_015(self),
+            5: I021_071(self),
+            6: I021_130(self),
+            7: I021_131(self),
+            11: I021_080(self),
+            12: I021_073(self),
+            14: I021_075(self),
+            16: I021_140(self),
+            17: I021_090(self),
+            18: I021_210(self),
+            19: I021_070(self),
+            21: I021_145(self),
+            23: I021_200(self),
+            24: I021_155(self),
+            26: I021_160(self),
+            28: I021_077(self),
+            29: I021_170(self),
+            30: I021_020(self),
+            32: I021_146(self),
+            35: I021_016(self),
+            36: I021_008(self),
+            37: I021_271(self),
+            38: I021_132(self),
+            41: I021_400(self),
+            42: I021_295(self),
+            48: I021_RE(self),
+        }
+        return data_item_map.get(self.FRN)
         
         
     def retrieve_datalist(self):

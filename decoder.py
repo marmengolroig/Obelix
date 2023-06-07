@@ -13,7 +13,6 @@ def decode(file_path):
     file = AsterixFile(file_path)
     file.read_file()
     file.divide_datablocks()
-    file.divide_records()
     file.decode_dataitems()
     print("Decoding finished.")
     return file
