@@ -10,7 +10,7 @@ path = (
     'Ficheros_asterix/201002-lebl-080001_smr_mlat_adsb.ast') # mixed
 
 def main():
-    file = AsterixFile(path[1])
+    file = AsterixFile(path[4])
     file.read_file()
     file.divide_datablocks()
     file.decode_dataitems()
@@ -33,11 +33,11 @@ def main():
             print('---')
             print(f'Dataitems list LENGTH: {len(dataitems_list)}')
             print(f'Dataitem FRN: {dataitems_list[n].FRN}')
-            if dataitems_list[n].FRN==48:
+            if dataitems_list[n].FRN==48 and dataitems_list[n].dataitem is not None:
                 print(f'Dataitem Data: {dataitems_list[n].dataitem.get_data()}')
-            else:
+            elif dataitems_list[n].dataitem is not None:
                 print(f'Dataitem Data: {dataitems_list[n].dataitem.data}')
-            print(f'Dataitem Decoded: {dataitems_list[n].dataitem.decode_data()}')
+                print(f'Dataitem Decoded: {dataitems_list[n].dataitem.decoded_data}')
             n=n+1
         m=m+1
 
