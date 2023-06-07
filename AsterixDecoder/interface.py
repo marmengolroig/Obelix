@@ -557,76 +557,6 @@ class Ui_MainWindow(object):
                 self.page_7.setObjectName(u"page_7")
                 self.verticalLayout_17 = QVBoxLayout(self.page_7)
                 self.verticalLayout_17.setObjectName(u"verticalLayout_17")
-
-                # PLAY BUTTON
-                self.playBtn = QPushButton(self.page_7)
-                self.playBtn.setFixedSize(QSize(30, 30))
-                self.playBtn.setIcon(QIcon('icons/play.svg'))
-                self.playBtn.setStyleSheet(
-                                                "QPushButton {"
-                                                "   background-color: #343b47;"
-                                                "}"
-                                                "QPushButton:hover {"
-                                                "   background-color: #2c313c;"
-                                                "}"
-                                                "QPushButton:pressed {"
-                                                "   background-color: #16191d;"
-                                                "}"
-                                        )
-                self.playBtn.clicked.connect(self.play_simulation)
-
-                # PAUSE BUTTON
-                self.pauseBtn = QPushButton(self.page_7)
-                self.pauseBtn.setFixedSize(QSize(30, 30))
-                self.pauseBtn.setIcon(QIcon('icons/pause.svg'))
-                self.pauseBtn.setStyleSheet(
-                                                "QPushButton {"
-                                                "   background-color: #343b47;"
-                                                "}"
-                                                "QPushButton:hover {"
-                                                "   background-color: #2c313c;"
-                                                "}"
-                                                "QPushButton:pressed {"
-                                                "   background-color: #16191d;"
-                                                "}"
-                                        )
-                self.pauseBtn.clicked.connect(self.pause_simulation)
-
-                # STOP BUTTON
-                self.stopBtn = QPushButton(self.page_7)
-                self.stopBtn.setFixedSize(QSize(30, 30))
-                self.stopBtn.setIcon(QIcon('icons/square.svg'))
-                self.stopBtn.setStyleSheet(
-                                                "QPushButton {"
-                                                "   background-color: #343b47;"
-                                                "}"
-                                                "QPushButton:hover {"
-                                                "   background-color: #2c313c;"
-                                                "}"
-                                                "QPushButton:pressed {"
-                                                "   background-color: #16191d;"
-                                                "}"
-                                        )
-                self.stopBtn.clicked.connect(self.stop_simulation)
-
-                # TIME LABEL
-                self.timeLabel = QLabel("Simulation Time", self.page_7)
-                self.timeLabel.setObjectName(u"timeLabel")
-                self.timeLabel.setFont(font)
-                self.timeLabel.setStyleSheet(
-                                                "QLabel {"
-                                                "   color: #838ea2;"
-                                                "}"
-                                        )
-
-                self.menu_layout = QHBoxLayout()
-                self.menu_layout.addWidget(self.playBtn)
-                self.menu_layout.addWidget(self.pauseBtn)
-                self.menu_layout.addWidget(self.stopBtn)
-                self.menu_layout.addStretch(1)
-                self.menu_layout.addWidget(self.timeLabel)
-                
-                self.verticalLayout_17.addLayout(self.menu_layout)
                 self.verticalLayout_17.setContentsMargins(0, 0, 0, 0)
                 self.verticalLayout_17.setSpacing(0)
 
@@ -647,35 +577,6 @@ class Ui_MainWindow(object):
                 bcn_airport = airports[airports['iata_code'] == 'BCN']
                 self.bcn_airport_lat = bcn_airport['geometry'].y.iloc[0]
                 self.bcn_airport_lon = bcn_airport['geometry'].x.iloc[0]
-                # AQUIIIIIIII#####################################################################################
-                               
-                # Create a Folium map
-                # self.m = folium.Map(location=[self.bcn_airport_lat, self.bcn_airport_lon], zoom_start=12.5)
-                
-                # Create a feature group for markers
-                # self.marker_group = folium.FeatureGroup(name='Markers')     
-
-                # Save the Folium map as an HTML file
-                # self.m.save(self.empty_html_path)
-                # AQUIIIIIIII#####################################################################################
-
-                # # Create a QWebEngineView widget
-                # self.marker_group = folium.FeatureGroup(name='Markers')     
-                # self.webview = QWebEngineView(self.page_7)
-                # self.webview.setMinimumSize(QSize(800, 600))
-                # self.verticalLayout_17.addStretch(1)
-                # self.verticalLayout_17.addWidget(self.webview)
-                # self.verticalLayout_17.addStretch(1)
-
-                # # Load the HTML file in the QWebEngineView widget
-                # self.webview.load(QUrl.fromLocalFile(self.empty_html_path))
-
-                # Start the timer to update plane positions
-                #self.timer = QTimer()
-                #self.timer.timeout.connect(self.updatePlanePositions)
-                #self.timer.start(1000)  # Update every 1 second
-
-                #### AQUI COMENÇA EL NOSTRE CODI de mapes
 
                 self.mainPages.addWidget(self.page_7)
                 self.page_8 = QWidget()
