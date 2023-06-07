@@ -22,7 +22,6 @@ class I010_161():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
         binary=concatenate_decimals_in_binary(self.data)
         track_number=int(binary[4:16],2)
         return track_number

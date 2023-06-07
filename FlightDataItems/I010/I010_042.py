@@ -21,7 +21,6 @@ class I010_042():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
         x_component = int(concatenate_decimals_in_binary(self.data[0:2]),2)
         y_component = int(concatenate_decimals_in_binary(self.data[2:4]),2)
         return (x_component, y_component)

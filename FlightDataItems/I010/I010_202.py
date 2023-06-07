@@ -22,7 +22,6 @@ class I010_202():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
         vx = decimal_to_bin_str(self.data[0])+decimal_to_bin_str(self.data[1])
         vx = read_in_twos_complement(vx)*0.25  # m/s
         vy = decimal_to_bin_str(self.data[2])+decimal_to_bin_str(self.data[3])

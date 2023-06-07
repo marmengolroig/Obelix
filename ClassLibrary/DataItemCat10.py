@@ -34,69 +34,48 @@ class DataItemCat10:
         self.ref_no = ''
         self.FRN = FRN
         self.long = 0
-        self.length_type = 0 # 0: fixed, 1: extended, 2: repetitive, 3: compound
+        self.length_type = 0
         self.data_list = data_list
         self.dataitem = self.create_dataitem()
-        
-        
+    
     def retrieve_long(self):
         return self.long
 
     def create_dataitem(self):
-        if self.FRN == 1:
-            return I010_010(self)
-        elif self.FRN == 2:
-            return I010_000(self)
-        elif self.FRN == 3:
-            return I010_020(self)
-        elif self.FRN == 4:
-            return I010_140(self)
-        elif self.FRN == 5:
-            return I010_041(self)
-        elif self.FRN == 6:
-            return I010_040(self)
-        elif self.FRN == 7:
-            return I010_042(self)
-        elif self.FRN == 8:
-            return I010_200(self)
-        elif self.FRN == 9:
-            return I010_202(self)
-        elif self.FRN == 10:
-            return I010_161(self)
-        elif self.FRN == 11:
-            return I010_170(self)
-        elif self.FRN == 12:
-            return I010_060(self)
-        elif self.FRN == 13:
-            return I010_220(self)
-        elif self.FRN == 14:
-            return I010_245(self)
-        elif self.FRN == 15:
-            return I010_250(self)
-        elif self.FRN == 16:
-            return I010_300(self)
-        elif self.FRN == 17:
-            return I010_090(self)
-        elif self.FRN == 18:
-            return I010_091(self)
-        elif self.FRN == 19:
-            return I010_270(self)
-        elif self.FRN == 20:
-            return I010_550(self)
-        elif self.FRN == 21:
-            return I010_310(self)
-        elif self.FRN == 22:
-            return I010_500(self)
-        elif self.FRN == 23:
-            return I010_280(self)
-        elif self.FRN == 24:
-            return I010_131(self)
-        elif self.FRN == 25:
-            return I010_210(self)
-        
+        data_item_classes = {
+            1: I010_010,
+            2: I010_000,
+            3: I010_020,
+            4: I010_140,
+            5: I010_041,
+            6: I010_040,
+            7: I010_042,
+            8: I010_200,
+            9: I010_202,
+            10: I010_161,
+            11: I010_170,
+            12: I010_060,
+            13: I010_220,
+            14: I010_245,
+            15: I010_250,
+            16: I010_300,
+            17: I010_090,
+            18: I010_091,
+            19: I010_270,
+            20: I010_550,
+            21: I010_310,
+            22: I010_500,
+            23: I010_280,
+            24: I010_131,
+            25: I010_210
+        }
+        data_item_class = data_item_classes.get(self.FRN)
+        if data_item_class:
+            return data_item_class(self)
         
     def retrieve_datalist(self):
         return self.data_list
+    
     def retrieve_data(self):
         return self.dataitem.data
     

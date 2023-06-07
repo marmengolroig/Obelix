@@ -22,7 +22,6 @@ class I010_280():
         return self.parent.data_list[0:self.parent.long]
     
     def decode_data(self):
-        print(self.data)
         list = []
         i = 0
         while i < self.parent.long:

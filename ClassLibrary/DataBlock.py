@@ -7,17 +7,17 @@ from ClassLibrary.Record import Record
 from ClassLibrary.utils import decimal_to_bin_str
 
 class DataBlock:
-    def __init__(self,cat):
+    def __init__(self, cat):
         self.cat = cat
         self.long = 0
         self.record = Record()
 
-    def decode_long(self,decimal_1,decimal_2):
-        bin_str = decimal_to_bin_str(decimal_1) + decimal_to_bin_str(decimal_2) 
-        return int(bin_str,2)
-    
+    def decode_long(self, decimal_1, decimal_2):
+        bin_str = f'{decimal_1:08b}{decimal_2:08b}'
+        return int(bin_str, 2)
+
     def decode_record(self):
         if self.cat == 10:
-            return self.record.decode_cat10()
+            self.record.decode_cat10()
         elif self.cat == 21:
-            return self.record.decode_cat21()
+            self.record.decode_cat21()

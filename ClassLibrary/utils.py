@@ -35,14 +35,14 @@ def concatenate_decimals_in_binary(decimal_list):
     return concatenated_binary
 
 def read_in_twos_complement(binary):
-        # Check if the number is negative (sign bit is 1)
-    if binary[0] == '1':
-        # Perform two's complement conversion
-        inverted_bits = ''.join('1' if bit == '0' else '0' for bit in binary)
-        decimal_number = -(int(inverted_bits, 2) + 1)
+    if binary:
+        if binary[0] == '1':
+            complement = ''.join('1' if bit == '0' else '0' for bit in binary)
+            return -int(complement, 2) - 1
+        else:
+            return int(binary, 2)
     else:
-        decimal_number = int(binary, 2)
-    return decimal_number
+        return 0
 
 def read_character(binary):
     if binary == '000001':
@@ -147,3 +147,38 @@ def decimal_to_four_digit_octal(decimal):
             octal = '000'+ octal
     
     return(octal)
+
+def four_bit_to_char(binary):
+    if binary == '0000':
+        char = '0'
+    elif binary == '0001':
+        char = '1'
+    elif binary == '0010':
+        char = '2'
+    elif binary == '0011':
+        char = '3'
+    elif binary == '0100':
+        char = '4'
+    elif binary == '0101':
+        char = '5'
+    elif binary == '0110':
+        char = '6'
+    elif binary == '0111':
+        char = '7'
+    elif binary == '1000':
+        char = '8'
+    elif binary == '1001':
+        char = '9'
+    elif binary == '1010':
+        char = 'A'
+    elif binary == '1011':
+        char = 'B'
+    elif binary == '1100':
+        char = 'C'
+    elif binary == '1101':
+        char = 'D'
+    elif binary == '1110':
+        char = 'E'
+    elif binary == '1111':
+        char = 'F'
+    return char
